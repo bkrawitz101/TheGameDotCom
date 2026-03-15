@@ -98,7 +98,7 @@
             width: 100%;
             text-align: center;
             z-index: 100;
-            pointer-events: none; /* Let clicks pass through if needed */
+            pointer-events: none; 
         }
 
         .nav-header h1 {
@@ -109,7 +109,7 @@
             text-shadow: 0 0 15px var(--text-color);
             color: var(--text-color);
             font-size: clamp(1.5rem, 4vw, 2.5rem);
-            transition: color 1s;
+            transition: color 1s, text-shadow 1s;
         }
 
         .nav-hint {
@@ -118,12 +118,12 @@
             letter-spacing: 2px;
             font-size: 0.9rem;
             text-transform: uppercase;
-            opacity: 0.7;
+            opacity: 0;
             transition: opacity 0.5s;
         }
 
         .nav-hint.visible {
-            opacity: 1;
+            opacity: 0.8;
         }
 
         /* The Main Viewport for Fractal Zooming */
@@ -136,11 +136,7 @@
             margin-top: 5vh;
         }
 
-        /* 
-           THE FRACTAL ANIMATION MAGIC
-           Extremely slow, deep scale (30x) with rotation to create a 
-           hyperspace blending effect where layers crossfade beautifully.
-        */
+        /* The Fractal Animation */
         .holonic-container {
             position: absolute;
             top: 0; left: 0;
@@ -158,7 +154,6 @@
         }
 
         .state-zoomed-in {
-            /* Flies past camera, spinning 45 degrees, getting 30x bigger */
             transform: scale(30) rotate(45deg);
             opacity: 0;
             pointer-events: none;
@@ -166,7 +161,6 @@
         }
 
         .state-zoomed-out {
-            /* Starts tiny and rotated backwards from deep in the center */
             transform: scale(0.01) rotate(-45deg);
             opacity: 0;
             pointer-events: none;
@@ -217,22 +211,14 @@
             transform: translate(-50%, -50%);
         }
 
-        .en-1  { top: 4%; left: 50%; }
-        .en-2  { top: 7.5%; left: 67.6%; }
-        .en-3  { top: 17.47%; left: 82.53%; }
-        .en-4  { top: 32.4%; left: 92.5%; }
-        .en-5  { top: 50%; left: 96%; }
-        .en-6  { top: 67.6%; left: 92.5%; }
-        .en-7  { top: 82.53%; left: 82.53%; }
-        .en-8  { top: 92.5%; left: 67.6%; }
-        .en-9  { top: 96%; left: 50%; }
-        .en-10 { top: 92.5%; left: 32.4%; }
-        .en-11 { top: 82.53%; left: 17.47%; }
-        .en-12 { top: 67.6%; left: 7.5%; }
-        .en-13 { top: 50%; left: 4%; }
-        .en-14 { top: 32.4%; left: 7.5%; }
-        .en-15 { top: 17.47%; left: 17.47%; }
-        .en-16 { top: 7.5%; left: 32.4%; }
+        .en-1  { top: 4%; left: 50%; } .en-2  { top: 7.5%; left: 67.6%; }
+        .en-3  { top: 17.47%; left: 82.53%; } .en-4  { top: 32.4%; left: 92.5%; }
+        .en-5  { top: 50%; left: 96%; } .en-6  { top: 67.6%; left: 92.5%; }
+        .en-7  { top: 82.53%; left: 82.53%; } .en-8  { top: 92.5%; left: 67.6%; }
+        .en-9  { top: 96%; left: 50%; } .en-10 { top: 92.5%; left: 32.4%; }
+        .en-11 { top: 82.53%; left: 17.47%; } .en-12 { top: 67.6%; left: 7.5%; }
+        .en-13 { top: 50%; left: 4%; } .en-14 { top: 32.4%; left: 7.5%; }
+        .en-15 { top: 17.47%; left: 17.47%; } .en-16 { top: 7.5%; left: 32.4%; }
 
         /* The Petals Container */
         .petals-container {
@@ -310,8 +296,8 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes spinReverse { 100% { transform: rotate(-360deg); } }
 
-        /* Modal Info Panel */
-        .info-panel {
+        /* Modal Info Panel (Hover Preview at Root) */
+        .hover-preview-panel {
             position: fixed;
             bottom: 30px;
             right: 30px;
@@ -330,23 +316,161 @@
             color: var(--text-color);
         }
 
-        .info-panel.active {
+        .hover-preview-panel.active {
             opacity: 1;
             transform: translateY(0);
         }
 
-        .info-panel h3 {
+        .hover-preview-panel h3 {
             margin: 0 0 10px 0;
             color: var(--glow-color, var(--text-color));
             font-weight: 300;
             letter-spacing: 1px;
         }
 
-        .info-panel p {
+        .hover-preview-panel p {
             margin: 0;
             font-size: 0.95rem;
             line-height: 1.5;
         }
+
+        /* --- THE BOTTOM CLICKABLE BOX (Visible only when zoomed in) --- */
+        #layer-info-box {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--panel-bg);
+            border: 1px solid var(--glow-color, var(--text-color));
+            padding: 20px 40px;
+            border-radius: 30px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--glow-color, rgba(255,255,255,0.2));
+            backdrop-filter: blur(15px);
+            opacity: 0;
+            z-index: 2000;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 80%;
+            color: var(--text-color);
+        }
+
+        #layer-info-box.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        #layer-info-box:hover {
+            transform: translateX(-50%) translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 30px var(--glow-color, rgba(255,255,255,0.4));
+        }
+
+        #layer-info-box h3 {
+            margin: 0 0 5px 0;
+            font-weight: 400;
+            letter-spacing: 2px;
+            color: var(--glow-color, var(--text-color));
+        }
+
+        #layer-info-box p {
+            margin: 0 0 10px 0;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .click-hint {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            animation: pulseHint 2s infinite;
+        }
+
+        @keyframes pulseHint {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* --- FULL SCREEN MODAL --- */
+        #full-screen-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 100000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s;
+            backdrop-filter: blur(20px);
+        }
+
+        #full-screen-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-inner-content {
+            background: var(--panel-bg);
+            border: 1px solid var(--glow-color, var(--text-color));
+            padding: 60px;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 85%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px var(--glow-color, rgba(255,255,255,0.2));
+            color: var(--text-color);
+            transform: scale(0.9);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #full-screen-modal.active .modal-inner-content {
+            transform: scale(1);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            cursor: pointer;
+            color: var(--text-color);
+            opacity: 0.6;
+            transition: opacity 0.3s, transform 0.3s, color 0.3s;
+            line-height: 1;
+        }
+
+        .modal-close-btn:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+            color: var(--glow-color, var(--text-color));
+        }
+
+        #modal-body h2 {
+            margin-top: 0;
+            color: var(--glow-color, var(--text-color));
+            letter-spacing: 3px;
+            font-weight: 300;
+            font-size: 2.5rem;
+            border-bottom: 1px solid rgba(128,128,128,0.3);
+            padding-bottom: 15px;
+        }
+
+        #modal-body p {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        /* Custom Scrollbar for Modal */
+        .modal-inner-content::-webkit-scrollbar { width: 8px; }
+        .modal-inner-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        .modal-inner-content::-webkit-scrollbar-thumb { background: var(--glow-color, #888); border-radius: 10px; }
 
     </style>
 </head>
@@ -364,16 +488,34 @@
     <div id="main-app">
         <div class="nav-header">
             <h1 id="mainTitle">THE INFINITE GAME</h1>
-            <div class="nav-hint" id="navHint" style="opacity: 0;">Click Center Core to Zoom Out</div>
+            <div class="nav-hint" id="navHint">Click Center Core to Zoom Out</div>
         </div>
 
         <div id="fractal-viewport">
             <!-- Dynamically Injected -->
         </div>
 
-        <div class="info-panel" id="infoPanel">
-            <h3 id="infoTitle">Title</h3>
-            <p id="infoDesc">Description</p>
+        <!-- Hover Preview (Visible at Root) -->
+        <div class="hover-preview-panel" id="hoverPreview">
+            <h3 id="hoverTitle">Title</h3>
+            <p id="hoverDesc">Description</p>
+        </div>
+
+        <!-- The Clickable Bottom Box (Visible when Zoomed In) -->
+        <div id="layer-info-box" onclick="openFullScreenModal()">
+            <h3 id="layerBoxTitle">Title</h3>
+            <p id="layerBoxDesc">Description</p>
+            <div class="click-hint">Click here to eXplore full details</div>
+        </div>
+    </div>
+
+    <!-- Full Screen Modal -->
+    <div id="full-screen-modal">
+        <div class="modal-inner-content">
+            <span class="modal-close-btn" onclick="closeFullScreenModal()">&times;</span>
+            <div id="modal-body">
+                <!-- Injected Full Text -->
+            </div>
         </div>
     </div>
 
@@ -430,38 +572,87 @@
         }
 
 
-        // --- HOLONIC BROWSER LOGIC ---
+        // --- HOLONIC BROWSER LOGIC & DATA ---
         const nodeData = {
-            north: { title: "ENTucationX", color: "#8b5cf6", desc: "Gateway of Learning. Transform curriculum into a hero's journey." },
-            ne: { title: "Innovation Node", color: "#ec4899", desc: "Bridge: Learning & Connection. AR & MultiVRse tech." },
-            east: { title: "CommUnityX", color: "#ef4444", desc: "Gateway of Connection. Family, legacy, and global villages." },
-            se: { title: "Expression Node", color: "#f97316", desc: "Bridge: Connection & Healing. Art, story, and TTimecapsules." },
-            south: { title: "WEllnessX", color: "#eab308", desc: "Gateway of Healing. Biofeedback, longevity, and regeneration." },
-            sw: { title: "Resolution Node", color: "#22c55e", desc: "Bridge: Healing & Prosperity. Regen Campus & ecology." },
-            west: { title: "BeISnessX", color: "#06b6d4", desc: "Gateway of Prosperity. AI-IA tools and CoOpoly franchises." },
-            nw: { title: "Creation Node", color: "#3b82f6", desc: "Bridge: Prosperity & Learning. PACreator DAO." }
+            north: { 
+                title: "ENTucationX", color: "#8b5cf6", desc: "Gateway of Learning. Transform curriculum into a hero's journey.",
+                fullText: `<h2>ENTucationX (North Portal)</h2>
+                           <p>Welcome to the Gateway of Learning. In an era of shortening attention spans and outdated memorization models, ENTucationX transforms any educational curriculum into an engaging hero's journey.</p>
+                           <p>Here, students and lifelong learners dive deeply into <b>HiStory, HerStory, and MyStory</b>. Through the integration of the XtheGAME synchronicity engine, education becomes an exploration of personal potential rather than mere test preparation.</p>
+                           <p>Participants can unlock <b>Xperience University certifications</b>, tracking their mastery across multiple disciplines, and engage with an epic 4-book narrative that bridges the gap between entertainment and profound personal evolution.</p>`
+            },
+            ne: { 
+                title: "Innovation Node", color: "#ec4899", desc: "Bridge: Learning & Connection. AR & MultiVRse tech.",
+                fullText: `<h2>Innovation Node</h2>
+                           <p>Located between the portals of Learning and Connection, the Innovation Node is where technology serves humanity. This is the integration point for the <b>XR MultiVRse</b> and Augmented Reality (AR) tools.</p>
+                           <p>Here, the physical tabletop game connects to the digital ether. Players use their mobile devices to reveal hidden layers of the cards, mapping their real-world intentions into the digital blockchain. It ensures that our technological advancement always remains anchored to regenerative human connection.</p>`
+            },
+            east: { 
+                title: "CommUnityX", color: "#ef4444", desc: "Gateway of Connection. Family, legacy, and global villages.",
+                fullText: `<h2>CommUnityX (East Portal)</h2>
+                           <p>Welcome to the Gateway of Connection. Modern social media has created an 'Intention Deficit Disorder,' hyper-connecting our screens while disconnecting our souls. CommUnityX is the antidote.</p>
+                           <p>This portal focuses on family bonding, legacy storytelling, and conflict resolution. It provides a structured space for individuals to map their personal <b>'Book of Life' (TTimecapsule)</b>, heal interpersonal relationships, and help build regenerative global village networks.</p>
+                           <p>It represents the ultimate shift from isolated, extractive individuals to a globally connected, locally interactive community.</p>`
+            },
+            se: { 
+                title: "Expression Node", color: "#f97316", desc: "Bridge: Connection & Healing. Art, story, and TTimecapsules.",
+                fullText: `<h2>Expression Node</h2>
+                           <p>Bridging Connection and Healing, the Expression Node is a creative hub for artists, musicians, and storytellers. True healing often requires the capacity to express one's inner world safely and authentically.</p>
+                           <p>This space empowers players to channel their emotions, visions, and experiences into the broader holonic network, turning their personal journey into art that inspires and uplifts the collective community.</p>`
+            },
+            south: { 
+                title: "WEllnessX", color: "#eab308", desc: "Gateway of Healing. Biofeedback, longevity, and regeneration.",
+                fullText: `<h2>WEllnessX (South Portal)</h2>
+                           <p>Welcome to the Gateway of Healing. To build a healthy world, we must first build healthy vessels. WEllnessX gamifies your holistic health journey.</p>
+                           <p>This portal explores the frontiers of biofeedback, longevity practices, <b>Be Well pop-ups</b>, and the transmission of intergenerational regenerative wisdom. It integrates physical health with mental and spiritual alignment.</p>
+                           <p>By engaging with WEllnessX, players learn to treat their bodies as sacred geometry, ensuring they have the vitality required to continue playing the Infinite Game.</p>`
+            },
+            sw: { 
+                title: "Resolution Node", color: "#22c55e", desc: "Bridge: Healing & Prosperity. Regen Campus & ecology.",
+                fullText: `<h2>Resolution Node</h2>
+                           <p>Bridging Healing and Prosperity, the Resolution Node focuses strictly on ecological regeneration and planetary stewardship. True prosperity cannot exist on a dying planet.</p>
+                           <p>This node is the seed point for the <b>Regen Campus Model</b>, weaving regenerative agricultural practices, local food systems, and immersive design into a living blueprint for community resilience.</p>`
+            },
+            west: { 
+                title: "BeISnessX", color: "#06b6d4", desc: "Gateway of Prosperity. AI-IA tools and CoOpoly franchises.",
+                fullText: `<h2>BeISnessX (West Portal)</h2>
+                           <p>Welcome to the Gateway of Prosperity. For generations, Monopoly taught us to be ruthless, bankrupt our friends, and hoard resources. BeISnessX introduces the era of <b>CoOpoly™</b>.</p>
+                           <p>This portal transforms workplace dynamics, turning corporate team-building into productive play. It provides access to <b>AI-IA (Internal Algorithm)</b> business tools and franchise opportunities, allowing conscious entrepreneurs to literally get Paid 2 Play.</p>
+                           <p>It acts as the economic engine of the ecosystem, proving that doing good in the world can also be massively profitable.</p>`
+            },
+            nw: { 
+                title: "Creation Node", color: "#3b82f6", desc: "Bridge: Prosperity & Learning. PACreator DAO.",
+                fullText: `<h2>Creation Node</h2>
+                           <p>Bridging Prosperity and Learning, the Creation Node is where players become architects of the game itself.</p>
+                           <p>Here, you step into <b>PACreator (Player-Ambassador-Creator)</b> status. Empowered by the platform, users can develop new game modules, launch decentralized autonomous organizations (DAOs), and steward local franchise nodes to spread the Infinite Game into new territories.</p>`
+            }
         };
 
         const origins = {
-            north: "50% 34%",
-            ne: "61.32% 38.68%",
-            east: "66% 50%",
-            se: "61.32% 61.32%",
-            south: "50% 66%",
-            sw: "38.68% 61.32%",
-            west: "34% 50%",
-            nw: "38.68% 38.68%",
-            center: "50% 50%"
+            north: "50% 34%", ne: "61.32% 38.68%", east: "66% 50%", se: "61.32% 61.32%",
+            south: "50% 66%", sw: "38.68% 61.32%", west: "34% 50%", nw: "38.68% 38.68%", center: "50% 50%"
         };
 
         const viewport = document.getElementById('fractal-viewport');
         const mainTitle = document.getElementById('mainTitle');
         const navHint = document.getElementById('navHint');
-        const infoPanel = document.getElementById('infoPanel');
-        const infoTitle = document.getElementById('infoTitle');
-        const infoDesc = document.getElementById('infoDesc');
+
+        // Hover Preview Panel
+        const hoverPreview = document.getElementById('hoverPreview');
+        const hoverTitle = document.getElementById('hoverTitle');
+        const hoverDesc = document.getElementById('hoverDesc');
+
+        // Bottom Layer Info Box
+        const layerInfoBox = document.getElementById('layer-info-box');
+        const layerBoxTitle = document.getElementById('layerBoxTitle');
+        const layerBoxDesc = document.getElementById('layerBoxDesc');
+
+        // Full Screen Modal
+        const fullScreenModal = document.getElementById('full-screen-modal');
+        const modalBody = document.getElementById('modal-body');
 
         let historyStack = [];
+        let currentNode = null;
 
         function createLayerHTML(id, stateClass) {
             return `
@@ -479,14 +670,14 @@
                     <div class="edge-node en-15"></div><div class="edge-node en-16"></div>
                 </div>
                 <div class="petals-container">
-                    <div class="petal p-north" onmouseover="showInfo('north')" onmouseout="hideInfo()" onclick="zoomIn('north')"></div>
-                    <div class="petal p-ne" onmouseover="showInfo('ne')" onmouseout="hideInfo()" onclick="zoomIn('ne')"></div>
-                    <div class="petal p-east" onmouseover="showInfo('east')" onmouseout="hideInfo()" onclick="zoomIn('east')"></div>
-                    <div class="petal p-se" onmouseover="showInfo('se')" onmouseout="hideInfo()" onclick="zoomIn('se')"></div>
-                    <div class="petal p-south" onmouseover="showInfo('south')" onmouseout="hideInfo()" onclick="zoomIn('south')"></div>
-                    <div class="petal p-sw" onmouseover="showInfo('sw')" onmouseout="hideInfo()" onclick="zoomIn('sw')"></div>
-                    <div class="petal p-west" onmouseover="showInfo('west')" onmouseout="hideInfo()" onclick="zoomIn('west')"></div>
-                    <div class="petal p-nw" onmouseover="showInfo('nw')" onmouseout="hideInfo()" onclick="zoomIn('nw')"></div>
+                    <div class="petal p-north" onmouseover="showHover('north')" onmouseout="hideHover()" onclick="zoomIn('north')"></div>
+                    <div class="petal p-ne" onmouseover="showHover('ne')" onmouseout="hideHover()" onclick="zoomIn('ne')"></div>
+                    <div class="petal p-east" onmouseover="showHover('east')" onmouseout="hideHover()" onclick="zoomIn('east')"></div>
+                    <div class="petal p-se" onmouseover="showHover('se')" onmouseout="hideHover()" onclick="zoomIn('se')"></div>
+                    <div class="petal p-south" onmouseover="showHover('south')" onmouseout="hideHover()" onclick="zoomIn('south')"></div>
+                    <div class="petal p-sw" onmouseover="showHover('sw')" onmouseout="hideHover()" onclick="zoomIn('sw')"></div>
+                    <div class="petal p-west" onmouseover="showHover('west')" onmouseout="hideHover()" onclick="zoomIn('west')"></div>
+                    <div class="petal p-nw" onmouseover="showHover('nw')" onmouseout="hideHover()" onclick="zoomIn('nw')"></div>
                 </div>
                 <div class="center-core" onclick="zoomOut()"></div>
             </div>`;
@@ -495,8 +686,10 @@
         viewport.innerHTML = createLayerHTML('layer-0', 'state-active');
 
         function zoomIn(nodeId) {
-            hideInfo();
+            hideHover(); // Hide the preview box immediately
+
             const data = nodeData[nodeId];
+            currentNode = nodeId;
 
             const oldLayerId = `layer-${historyStack.length}`;
             const newLayerId = `layer-${historyStack.length + 1}`;
@@ -517,11 +710,21 @@
 
             historyStack.push(nodeId);
 
-            // Only show the target node title (no tree)
+            // UI Updates
             mainTitle.innerText = data.title;
             mainTitle.style.textShadow = `0 0 20px ${data.color}`;
             mainTitle.style.color = data.color;
-            navHint.style.opacity = '1'; // Show instructions to zoom out
+            navHint.classList.add('visible');
+
+            // Populate and show the bottom clickable box
+            layerBoxTitle.innerText = data.title;
+            layerBoxDesc.innerText = data.desc;
+            layerInfoBox.style.setProperty('--glow-color', data.color);
+
+            // Delay showing the bottom box slightly for dramatic effect
+            setTimeout(() => {
+                layerInfoBox.classList.add('visible');
+            }, 1000);
 
             setTimeout(() => {
                 if(document.getElementById(oldLayerId) && document.getElementById(oldLayerId).classList.contains('state-zoomed-in')) {
@@ -533,7 +736,8 @@
         function zoomOut() {
             if (historyStack.length === 0) return; 
 
-            hideInfo();
+            hideHover();
+            layerInfoBox.classList.remove('visible'); // Hide bottom box while zooming out
 
             const currentLayerId = `layer-${historyStack.length}`;
             const previousLayerId = `layer-${historyStack.length - 1}`;
@@ -554,29 +758,59 @@
             historyStack.pop();
 
             if(historyStack.length === 0) {
+                currentNode = null;
                 mainTitle.innerText = "THE INFINITE GAME";
                 mainTitle.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
                 mainTitle.style.textShadow = `0 0 15px ${mainTitle.style.color}`;
-                navHint.style.opacity = '0'; // Hide hint at root
+                navHint.classList.remove('visible');
             } else {
-                const parentNodeId = historyStack[historyStack.length - 1];
-                mainTitle.innerText = nodeData[parentNodeId].title;
-                mainTitle.style.color = nodeData[parentNodeId].color;
-                mainTitle.style.textShadow = `0 0 20px ${nodeData[parentNodeId].color}`;
+                currentNode = historyStack[historyStack.length - 1];
+                const parentData = nodeData[currentNode];
+                mainTitle.innerText = parentData.title;
+                mainTitle.style.color = parentData.color;
+                mainTitle.style.textShadow = `0 0 20px ${parentData.color}`;
+
+                // Re-populate and show bottom box for the new parent layer
+                layerBoxTitle.innerText = parentData.title;
+                layerBoxDesc.innerText = parentData.desc;
+                layerInfoBox.style.setProperty('--glow-color', parentData.color);
+                setTimeout(() => {
+                    layerInfoBox.classList.add('visible');
+                }, 1000);
             }
         }
 
-        function showInfo(nodeId) {
+        function showHover(nodeId) {
             const data = nodeData[nodeId];
-            infoTitle.innerText = data.title;
-            infoDesc.innerText = data.desc;
-            infoPanel.style.setProperty('--glow-color', data.color);
-            infoPanel.classList.add('active');
+            hoverTitle.innerText = data.title;
+            hoverDesc.innerText = data.desc;
+            hoverPreview.style.setProperty('--glow-color', data.color);
+            hoverPreview.classList.add('active');
         }
 
-        function hideInfo() {
-            infoPanel.classList.remove('active');
+        function hideHover() {
+            hoverPreview.classList.remove('active');
         }
+
+        // --- FULL SCREEN MODAL LOGIC ---
+        function openFullScreenModal() {
+            if(!currentNode) return;
+            const data = nodeData[currentNode];
+
+            // Inject content
+            modalBody.innerHTML = data.fullText;
+
+            // Set dynamic glow color based on the current node
+            fullScreenModal.style.setProperty('--glow-color', data.color);
+
+            // Show modal
+            fullScreenModal.classList.add('active');
+        }
+
+        function closeFullScreenModal() {
+            fullScreenModal.classList.remove('active');
+        }
+
     </script>
 </body>
 </html>
