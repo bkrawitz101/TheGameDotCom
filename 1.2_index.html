@@ -23,7 +23,6 @@
             min-height: 100vh;
             overflow: hidden;
             transition: background-color 2s ease;
-            -webkit-tap-highlight-color: transparent; /* Removes default mobile tap flash */
         }
 
         /* --- DYNAMIC ASYMMETRICAL STARFIELD --- */
@@ -243,34 +242,11 @@
             align-items: center;
         }
 
-        /* 
-           Desktop Hover Effect 
-           Only applies if device supports true hover (no lag on mobile)
-        */
-        @media (hover: hover) and (pointer: fine) {
-            .petal:hover {
-                transform: scale(1.15);
-                z-index: 20;
-                opacity: 1;
-                box-shadow: 0 0 40px currentColor;
-            }
-            .petal:hover::after {
-                opacity: 1;
-            }
-        }
-
-        /* 
-           Mobile 2-Tap Focus Effect
-           Triggered via JS when a user taps a node once
-        */
-        .petal.mobile-focused {
+        .petal:hover {
             transform: scale(1.15);
             z-index: 20;
             opacity: 1;
             box-shadow: 0 0 40px currentColor;
-        }
-        .petal.mobile-focused::after {
-            opacity: 1;
         }
 
         .petal::after {
@@ -282,6 +258,10 @@
             letter-spacing: 2px;
             transition: opacity 0.3s;
             text-shadow: 0 0 5px #000;
+        }
+
+        .petal:hover::after {
+            opacity: 1;
         }
 
         .p-north { top: 23.5%; left: 39.5%; background-color: #8b5cf6; color: #8b5cf6; } 
@@ -316,21 +296,22 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes spinReverse { 100% { transform: rotate(-360deg); } }
 
-        /* --- SMALL HOVER PREVIEW PANEL --- */
+        /* Modal Info Panel (Hover Preview at Root) */
         .hover-preview-panel {
             position: fixed;
             bottom: 30px;
             right: 30px;
             background: var(--panel-bg);
             border: 1px solid var(--glow-color, var(--text-color));
-            padding: 12px 25px; 
-            border-radius: 30px;
+            padding: 20px 30px;
+            border-radius: 15px;
+            max-width: 400px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 15px var(--glow-color, rgba(128, 128, 128, 0.2));
             backdrop-filter: blur(10px);
             opacity: 0;
             transform: translateY(20px);
-            transition: all 0.3s ease; 
-            z-index: 3000; 
+            transition: all 0.5s ease;
+            z-index: 1000;
             pointer-events: none;
             color: var(--text-color);
         }
@@ -341,12 +322,16 @@
         }
 
         .hover-preview-panel h3 {
-            margin: 0; 
+            margin: 0 0 10px 0;
             color: var(--glow-color, var(--text-color));
-            font-weight: 400;
-            letter-spacing: 2px;
-            font-size: 1.1rem;
-            text-transform: uppercase;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .hover-preview-panel p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
 
         /* --- THE BOTTOM CLICKABLE BOX (Visible only when zoomed in) --- */
@@ -365,7 +350,7 @@
             backdrop-filter: blur(15px);
             opacity: 0;
             z-index: 2000;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             max-width: 80%;
             color: var(--text-color);
         }
@@ -385,7 +370,6 @@
             font-weight: 400;
             letter-spacing: 2px;
             color: var(--glow-color, var(--text-color));
-            text-transform: uppercase;
         }
 
         #layer-info-box p {
@@ -504,16 +488,17 @@
     <div id="main-app">
         <div class="nav-header">
             <h1 id="mainTitle">THE INFINITE GAME</h1>
-            <div class="nav-hint" id="navHint">Tap/Click Center Core to Zoom Out</div>
+            <div class="nav-hint" id="navHint">Click Center Core to Zoom Out</div>
         </div>
 
         <div id="fractal-viewport">
             <!-- Dynamically Injected -->
         </div>
 
-        <!-- Small Hover Preview Pill (Visible at Root / Hover) -->
+        <!-- Hover Preview (Visible at Root) -->
         <div class="hover-preview-panel" id="hoverPreview">
             <h3 id="hoverTitle">Title</h3>
+            <p id="hoverDesc">Description</p>
         </div>
 
         <!-- The Clickable Bottom Box (Visible when Zoomed In) -->
@@ -652,24 +637,22 @@
         const mainTitle = document.getElementById('mainTitle');
         const navHint = document.getElementById('navHint');
 
+        // Hover Preview Panel
         const hoverPreview = document.getElementById('hoverPreview');
         const hoverTitle = document.getElementById('hoverTitle');
+        const hoverDesc = document.getElementById('hoverDesc');
 
+        // Bottom Layer Info Box
         const layerInfoBox = document.getElementById('layer-info-box');
         const layerBoxTitle = document.getElementById('layerBoxTitle');
         const layerBoxDesc = document.getElementById('layerBoxDesc');
 
+        // Full Screen Modal
         const fullScreenModal = document.getElementById('full-screen-modal');
         const modalBody = document.getElementById('modal-body');
 
         let historyStack = [];
         let currentNode = null;
-        let layerBoxTimeout;
-
-        // --- 3. MOBILE & TOUCH LOGIC ---
-        // We detect touch devices reliably to enable the 2-tap system
-        let isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-        let mobileFocusedNode = null; // Tracks which node is highlighted on tap 1
 
         function createLayerHTML(id, stateClass) {
             return `
@@ -687,14 +670,14 @@
                     <div class="edge-node en-15"></div><div class="edge-node en-16"></div>
                 </div>
                 <div class="petals-container">
-                    <div class="petal p-north" onmouseenter="handleMouseEnter('north')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'north')"></div>
-                    <div class="petal p-ne" onmouseenter="handleMouseEnter('ne')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'ne')"></div>
-                    <div class="petal p-east" onmouseenter="handleMouseEnter('east')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'east')"></div>
-                    <div class="petal p-se" onmouseenter="handleMouseEnter('se')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'se')"></div>
-                    <div class="petal p-south" onmouseenter="handleMouseEnter('south')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'south')"></div>
-                    <div class="petal p-sw" onmouseenter="handleMouseEnter('sw')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'sw')"></div>
-                    <div class="petal p-west" onmouseenter="handleMouseEnter('west')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'west')"></div>
-                    <div class="petal p-nw" onmouseenter="handleMouseEnter('nw')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'nw')"></div>
+                    <div class="petal p-north" onmouseover="showHover('north')" onmouseout="hideHover()" onclick="zoomIn('north')"></div>
+                    <div class="petal p-ne" onmouseover="showHover('ne')" onmouseout="hideHover()" onclick="zoomIn('ne')"></div>
+                    <div class="petal p-east" onmouseover="showHover('east')" onmouseout="hideHover()" onclick="zoomIn('east')"></div>
+                    <div class="petal p-se" onmouseover="showHover('se')" onmouseout="hideHover()" onclick="zoomIn('se')"></div>
+                    <div class="petal p-south" onmouseover="showHover('south')" onmouseout="hideHover()" onclick="zoomIn('south')"></div>
+                    <div class="petal p-sw" onmouseover="showHover('sw')" onmouseout="hideHover()" onclick="zoomIn('sw')"></div>
+                    <div class="petal p-west" onmouseover="showHover('west')" onmouseout="hideHover()" onclick="zoomIn('west')"></div>
+                    <div class="petal p-nw" onmouseover="showHover('nw')" onmouseout="hideHover()" onclick="zoomIn('nw')"></div>
                 </div>
                 <div class="center-core" onclick="zoomOut()"></div>
             </div>`;
@@ -702,76 +685,8 @@
 
         viewport.innerHTML = createLayerHTML('layer-0', 'state-active');
 
-        // MOUSE EVENTS (Desktop Only)
-        function handleMouseEnter(nodeId) {
-            if (isTouchDevice) return; // Prevent duplicate execution on touch
-            showHover(nodeId);
-        }
-
-        function handleMouseLeave() {
-            if (isTouchDevice) return;
-            hideHover();
-        }
-
-        // CLICK & TAP EVENTS
-        function handlePetalClick(event, nodeId) {
-            if (isTouchDevice) {
-                if (mobileFocusedNode !== nodeId) {
-                    // Tap 1: Focus & Show Pill
-                    event.preventDefault();
-                    clearMobileFocus();
-                    mobileFocusedNode = nodeId;
-                    event.currentTarget.classList.add('mobile-focused');
-                    showHover(nodeId);
-                } else {
-                    // Tap 2: Zoom In
-                    mobileFocusedNode = null;
-                    clearMobileFocus();
-                    zoomIn(nodeId);
-                }
-            } else {
-                // Desktop Click: Instantly Zoom
-                zoomIn(nodeId);
-            }
-        }
-
-        // Tap outside on mobile clears the focus
-        document.addEventListener('touchstart', function(e) {
-            if (!e.target.classList.contains('petal')) {
-                if (mobileFocusedNode) {
-                    mobileFocusedNode = null;
-                    clearMobileFocus();
-                    hideHover();
-                }
-            }
-        }, {passive: true});
-
-        function clearMobileFocus() {
-            document.querySelectorAll('.petal').forEach(p => p.classList.remove('mobile-focused'));
-        }
-
-        // --- VISUAL & ANIMATION LOGIC ---
-        function showHover(nodeId) {
-            const data = nodeData[nodeId];
-            hoverTitle.innerText = data.title;
-            hoverPreview.style.setProperty('--glow-color', data.color);
-            hoverPreview.classList.add('active');
-
-            // Hide the main bottom banner immediately to prevent clutter
-            layerInfoBox.classList.remove('visible');
-        }
-
-        function hideHover() {
-            hoverPreview.classList.remove('active');
-
-            // If we are deep in a node, bring the bottom banner back up smoothly
-            if (historyStack.length > 0) {
-                layerInfoBox.classList.add('visible');
-            }
-        }
-
         function zoomIn(nodeId) {
-            hideHover(); 
+            hideHover(); // Hide the preview box immediately
 
             const data = nodeData[nodeId];
             currentNode = nodeId;
@@ -801,17 +716,14 @@
             mainTitle.style.color = data.color;
             navHint.classList.add('visible');
 
-            // Clear existing timeout and reset the bottom box content
-            clearTimeout(layerBoxTimeout);
+            // Populate and show the bottom clickable box
             layerBoxTitle.innerText = data.title;
             layerBoxDesc.innerText = data.desc;
             layerInfoBox.style.setProperty('--glow-color', data.color);
 
             // Delay showing the bottom box slightly for dramatic effect
-            layerBoxTimeout = setTimeout(() => {
-                if (!hoverPreview.classList.contains('active')) {
-                    layerInfoBox.classList.add('visible');
-                }
+            setTimeout(() => {
+                layerInfoBox.classList.add('visible');
             }, 1000);
 
             setTimeout(() => {
@@ -822,13 +734,10 @@
         }
 
         function zoomOut() {
-            mobileFocusedNode = null;
-            clearMobileFocus();
-            hideHover();
-            clearTimeout(layerBoxTimeout);
-            layerInfoBox.classList.remove('visible'); 
-
             if (historyStack.length === 0) return; 
+
+            hideHover();
+            layerInfoBox.classList.remove('visible'); // Hide bottom box while zooming out
 
             const currentLayerId = `layer-${historyStack.length}`;
             const previousLayerId = `layer-${historyStack.length - 1}`;
@@ -865,12 +774,22 @@
                 layerBoxTitle.innerText = parentData.title;
                 layerBoxDesc.innerText = parentData.desc;
                 layerInfoBox.style.setProperty('--glow-color', parentData.color);
-                layerBoxTimeout = setTimeout(() => {
-                    if (!hoverPreview.classList.contains('active')) {
-                        layerInfoBox.classList.add('visible');
-                    }
+                setTimeout(() => {
+                    layerInfoBox.classList.add('visible');
                 }, 1000);
             }
+        }
+
+        function showHover(nodeId) {
+            const data = nodeData[nodeId];
+            hoverTitle.innerText = data.title;
+            hoverDesc.innerText = data.desc;
+            hoverPreview.style.setProperty('--glow-color', data.color);
+            hoverPreview.classList.add('active');
+        }
+
+        function hideHover() {
+            hoverPreview.classList.remove('active');
         }
 
         // --- FULL SCREEN MODAL LOGIC ---
@@ -878,8 +797,13 @@
             if(!currentNode) return;
             const data = nodeData[currentNode];
 
+            // Inject content
             modalBody.innerHTML = data.fullText;
+
+            // Set dynamic glow color based on the current node
             fullScreenModal.style.setProperty('--glow-color', data.color);
+
+            // Show modal
             fullScreenModal.classList.add('active');
         }
 
