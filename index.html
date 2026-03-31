@@ -720,22 +720,40 @@
         // CLICK & TAP EVENTS
         function handlePetalClick(event, nodeId) {
             if (isTouchDevice) {
-                if (mobileFocusedNode !== nodeId) {
-                    // Tap 1: Focus & Show Pill
+                // Mobile (2-tap system)
+                if (nodeId === 'ne') { // Special handling for the magenta node (Innovation Node)
+                    event.preventDefault(); // Prevent default browser behavior (like zooming)
+                    if (mobileFocusedNode !== nodeId) {
+                        // Tap 1 on mobile for 'ne': Focus & Show Pill
+                        clearMobileFocus();
+                        mobileFocusedNode = nodeId;
+                        event.currentTarget.classList.add('mobile-focused');
+                        showHover(nodeId);
+                    } else {
+                        // Tap 2 on mobile for 'ne': Play video
+                        mobileFocusedNode = null; // Clear mobile focus if it was set
+                        clearMobileFocus();
+                        playPromoVideo();
+                    }
+                } else if (mobileFocusedNode !== nodeId) { // First tap on any other node
                     event.preventDefault();
                     clearMobileFocus();
                     mobileFocusedNode = nodeId;
                     event.currentTarget.classList.add('mobile-focused');
                     showHover(nodeId);
-                } else {
-                    // Tap 2: Zoom In
+                } else { // Second tap on any other node: Zoom In
                     mobileFocusedNode = null;
                     clearMobileFocus();
                     zoomIn(nodeId);
                 }
             } else {
-                // Desktop Click: Instantly Zoom
-                zoomIn(nodeId);
+                // Desktop Click
+                if (nodeId === 'ne') { // Special handling for the magenta node (Innovation Node)
+                    playPromoVideo();
+                } else {
+                    // Instantly Zoom for other nodes
+                    zoomIn(nodeId);
+                }
             }
         }
 
@@ -880,6 +898,13 @@
         // --- FULL SCREEN MODAL LOGIC ---
         function openFullScreenModal() {
             if(!currentNode) return;
+
+            // If a video is playing, don't open the modal for text content
+            if (fullScreenModal.dataset.currentVideo === 'true') {
+                return;
+            }
+
+            // Otherwise, open modal with text content
             const data = nodeData[currentNode];
 
             modalBody.innerHTML = data.fullText;

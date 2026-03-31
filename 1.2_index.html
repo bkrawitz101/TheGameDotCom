@@ -813,6 +813,14 @@
 
         function closeFullScreenModal() {
             fullScreenModal.classList.remove('active');
+            // Pause and clear video if it was playing
+            const videoElement = modalBody.querySelector('video');
+            if (videoElement) {
+                console.log('Pausing and clearing video.');
+                videoElement.pause();
+                videoElement.currentTime = 0; // Reset video to start
+                modalBody.innerHTML = ''; // Clear video content
+            }
         }
 
     </script>
