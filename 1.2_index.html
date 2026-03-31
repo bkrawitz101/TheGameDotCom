@@ -586,7 +586,7 @@
                            <p>Participants can unlock <b>Xperience University certifications</b>, tracking their mastery across multiple disciplines, and engage with an epic 4-book narrative that bridges the gap between entertainment and profound personal evolution.</p>`
             },
             ne: { 
-                title: "Innovation Node", color: "#ec4899", desc: "Bridge: Learning & Connection. AR & MultiVRse tech.",
+                title: "X—THE GAME™ Promo video", color: "#ec4899", desc: "Bridge: Learning & Connection. AR & MultiVRse tech.",
                 fullText: `<h2>Innovation Node</h2>
                            <p>Located between the portals of Learning and Connection, the Innovation Node is where technology serves humanity. This is the integration point for the <b>XR MultiVRse</b> and Augmented Reality (AR) tools.</p>
                            <p>Here, the physical tabletop game connects to the digital ether. Players use their mobile devices to reveal hidden layers of the cards, mapping their real-world intentions into the digital blockchain. It ensures that our technological advancement always remains anchored to regenerative human connection.</p>`
@@ -724,6 +724,18 @@
             layerBoxTitle.innerText = data.title;
             layerBoxDesc.innerText = data.desc;
             layerInfoBox.style.setProperty('--glow-color', data.color);
+            
+            // Delay showing the bottom box slightly for dramatic effect, UNLESS it's the 'ne' node
+            if (nodeId !== 'ne') { // Only show layerInfoBox for non-'ne' nodes
+                layerBoxTimeout = setTimeout(() => {
+                    if (!hoverPreview.classList.contains('active')) {
+                        layerInfoBox.classList.add('visible');
+                    }
+                }, 1000);
+            } else {
+                // Ensure layerInfoBox is hidden if 'ne' is clicked
+                layerInfoBox.classList.remove('visible');
+            }
 
             // Delay showing the bottom box slightly for dramatic effect
             setTimeout(() => {
@@ -735,6 +747,13 @@
                     document.getElementById(oldLayerId).style.display = 'none';
                 }
             }, 4000); 
+
+            // Trigger video playback after zoom animation for 'ne' node
+            if (nodeId === 'ne') {
+                setTimeout(() => {
+                    playPromoVideo();
+                }, 3500); // Play video slightly before the old layer fully disappears
+            }
         }
 
         function zoomOut() {
@@ -813,13 +832,50 @@
 
         function closeFullScreenModal() {
             fullScreenModal.classList.remove('active');
-            // Pause and clear video if it was playing
-            const videoElement = modalBody.querySelector('video');
-            if (videoElement) {
-                console.log('Pausing and clearing video.');
-                videoElement.pause();
-                videoElement.currentTime = 0; // Reset video to start
-                modalBody.innerHTML = ''; // Clear video content
+        }
+
+        // Function to play the promo video
+        function playPromoVideo() {
+            console.log('Attempting to play promo video: Videos/X—THE GAME™ Promo video.mp4');
+            // Clear any existing content in the modal body
+            modalBody.innerHTML = '';
+
+            try {
+                // Create video element
+                const videoElement = document.createElement('video');
+                videoElement.src = 'Videos/X—THE GAME™ Promo video.mp4';
+            videoElement.controls = true; videoElement.muted = true; // Show video controls, and mute by default for autoplay
+                videoElement.autoplay = true; // Autoplay the video
+                videoElement.style.width = '100%';
+                videoElement.style.height = 'auto';
+                videoElement.style.display = 'block'; // Ensure it takes up space
+                videoElement.style.maxWidth = '100%'; // Ensure video fits within modal
+                videoElement.style.maxHeight = 'calc(80vh - 120px)'; // Adjust based on modal padding
+
+                // Add event listeners for debugging
+                videoElement.addEventListener('error', (e) => {
+                    console.error('Video playback error:', e);
+                    console.error('Video source:', videoElement.src);
+                    modalBody.innerHTML = '<p style="color: red;">Error loading video. Please check the file path and format.</p>';
+                });
+                videoElement.addEventListener('loadedmetadata', () => { console.log('Video metadata loaded successfully.'); });
+                videoElement.addEventListener('play', () => { console.log('Video started playing.'); });
+                videoElement.addEventListener('pause', () => { console.log('Video paused.'); });
+
+                // Append video to modal body
+                modalBody.appendChild(videoElement);
+
+                // Set a glow color for the modal (e.g., from the 'ne' node)
+                fullScreenModal.style.setProperty('--glow-color', nodeData.ne.color);
+
+                // Show modal
+                fullScreenModal.classList.add('active');
+
+                // Store the video element reference to pause it later
+                fullScreenModal.dataset.currentVideo = 'true'; // A flag to indicate video is playing
+            } catch (error) {
+                console.error('Error creating or playing video element:', error);
+                modalBody.innerHTML = '<p style="color: red;">An unexpected error occurred while trying to play the video.</p>';
             }
         }
 
