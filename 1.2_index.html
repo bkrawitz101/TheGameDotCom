@@ -176,7 +176,6 @@
             background: conic-gradient(from 0deg, 
                 #8b5cf6, #ec4899, #ef4444, #f97316, 
                 #eab308, #22c55e, #06b6d4, #3b82f6, #8b5cf6);
-            animation: spin 60s linear infinite;
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
         }
 
@@ -197,7 +196,6 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 6;
-            animation: spin 60s linear infinite;
         }
 
         .edge-node {
@@ -209,6 +207,9 @@
             border-radius: 50%;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), inset 0 0 5px #000;
             transform: translate(-50%, -50%);
+            background-size: 170%; /* Made images a little smaller */
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         .en-1  { top: 4%; left: 50%; } .en-2  { top: 7.5%; left: 67.6%; }
@@ -218,6 +219,9 @@
         .en-9  { top: 96%; left: 50%; } .en-10 { top: 92.5%; left: 32.4%; }
         .en-11 { top: 82.53%; left: 17.47%; } .en-12 { top: 67.6%; left: 7.5%; }
         .en-13 { top: 50%; left: 4%; } .en-14 { top: 32.4%; left: 7.5%; }
+        .en-1 { background-image: url('Images/north.png'); }
+        .en-9 { background-image: url('Images/south.png'); }
+        .en-13 { background-image: url('Images/west.png'); }
         .en-15 { top: 17.47%; left: 17.47%; } .en-16 { top: 7.5%; left: 32.4%; }
 
         /* The Petals Container */
