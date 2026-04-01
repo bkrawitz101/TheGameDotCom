@@ -613,7 +613,7 @@
         // --- HOLONIC BROWSER LOGIC & DATA ---
         const nodeData = {
             north: {
-                title: "Core X Algorithm", color: "#8b5cf6", desc: "Gateway of Learning. Transform curriculum into a hero's journey.",
+                title: "ENTucation - Core X Algorithm", color: "#8b5cf6", desc: "Gateway of Learning. Transform curriculum into a hero's journey.",
                 fullText: `<h2>OSX Beta Operating System for the Intentional Collision Of Ideas (ICOI)</h2>
                            <p>Creativity is a form of exploration. We take a journey, an excursion, beyond the boundaries of our everyday operational thinking and experience. We venture into unknown territories looking for new ideas because if we look where we’ve always been, we’ll find what we’ve always seen.</p>
                            <h3>Part I: The challenge of innovation</h3>
@@ -674,11 +674,8 @@
                            <p>Here, the physical tabletop game connects to the digital ether. Players use their mobile devices to reveal hidden layers of the cards, mapping their real-world intentions into the digital blockchain. It ensures that our technological advancement always remains anchored to regenerative human connection.</p>`
             },
             east: { 
-                title: "CommUnityX", color: "#ef4444", desc: "Gateway of Connection. Family, legacy, and global villages.",
-                fullText: `<h2>CommUnityX (East Portal)</h2>
-                           <p>Welcome to the Gateway of Connection. Modern social media has created an 'Intention Deficit Disorder,' hyper-connecting our screens while disconnecting our souls. CommUnityX is the antidote.</p>
-                           <p>This portal focuses on family bonding, legacy storytelling, and conflict resolution. It provides a structured space for individuals to map their personal <b>'Book of Life' (TTimecapsule)</b>, heal interpersonal relationships, and help build regenerative global village networks.</p>
-                           <p>It represents the ultimate shift from isolated, extractive individuals to a globally connected, locally interactive community.</p>`
+                title: "PrecariUS TimGalactic-Glocal Xperienceist (author template)", color: "#ef4444", desc: "Click to view PDF document.",
+                fullText: `` // Content will be injected by showEastPdf()
             },
             se: { 
                 title: "Expression Node", color: "#f97316", desc: "Bridge: Connection & Healing. Art, story, and TTimecapsules.",
@@ -748,7 +745,7 @@
                 <div class="outer-ring"></div>
                 <div class="inner-mask"></div>
                 <div class="edge-nodes-container" onclick="handleEdgeNodeClick(event)" onmouseover="handleEdgeNodeMouseOver(event)" onmouseout="handleEdgeNodeMouseOut(event)">
-                    <div class="edge-node en-1"></div><div class="edge-node en-2"></div>
+                    <div class="edge-node en-1" onmouseover="showHover('north')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'north')"></div><div class="edge-node en-2"></div>
                     <div class="edge-node en-3"></div><div class="edge-node en-4"></div>
                     <div class="edge-node en-5"></div><div class="edge-node en-6"></div>
                     <div class="edge-node en-7"></div><div class="edge-node en-8"></div>
@@ -758,7 +755,7 @@
                     <div class="edge-node en-15"></div><div class="edge-node en-16"></div>
                 </div>
                 <div class="petals-container">
-                    <div class="petal p-north"></div>
+                    <div class="petal p-north"></div> <!-- Functionality moved to en-1 -->
                     <div class="petal p-ne" onmouseenter="handleMouseEnter('ne')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'ne')"></div>
                     <div class="petal p-east" onmouseenter="handleMouseEnter('east')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'east')"></div>
                     <div class="petal p-se" onmouseenter="handleMouseEnter('se')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'se')"></div>
@@ -958,11 +955,15 @@
                 }
             }, 4000); 
 
-            // Trigger video playback after zoom animation for 'ne' node
+            // Trigger media playback after zoom animation
             if (nodeId === 'ne') {
                 setTimeout(() => {
                     playPromoVideo();
                 }, 3500); // Play video slightly before the old layer fully disappears
+            } else if (nodeId === 'east') {
+                setTimeout(() => {
+                    showEastPdf();
+                }, 3500);
             }
         }
 
@@ -1037,6 +1038,24 @@
 
         function closeFullScreenModal() {
             fullScreenModal.classList.remove('active');
+            // Pause and clear video if it was playing
+            console.log('Closing modal. Checking for media to pause and clear.');
+            const videoElement = modalBody.querySelector('video');
+            if (videoElement) {
+                videoElement.pause();
+                videoElement.currentTime = 0; // Reset video to start
+            }
+            
+            // Reset any full-screen inline styles from PDF view
+            const innerContent = document.querySelector('.modal-inner-content');
+            innerContent.style.width = '';
+            innerContent.style.height = '';
+            innerContent.style.maxWidth = '';
+            innerContent.style.maxHeight = '';
+            innerContent.style.borderRadius = '';
+            innerContent.style.padding = '';
+
+            setTimeout(() => { modalBody.innerHTML = ''; }, 500); // Clear content after fade
         }
 
         // Function to play the promo video
@@ -1081,6 +1100,38 @@
             } catch (error) {
                 console.error('Error creating or playing video element:', error);
                 modalBody.innerHTML = '<p style="color: red;">An unexpected error occurred while trying to play the video.</p>';
+            }
+        }
+
+        // Function to show PDF for East Node
+        function showEastPdf() {
+            console.log('Attempting to show PDF: Images/PrecariUS-Times.pdf');
+            modalBody.innerHTML = '';
+
+            try {
+                const iframeElement = document.createElement('iframe');
+                iframeElement.src = 'Images/PrecariUS-Times.pdf#view=FitH&pagemode=none&toolbar=0&scrollbar=1';
+                iframeElement.style.width = '100%';
+                iframeElement.style.height = 'calc(100vh - 60px)'; // Fill available height
+                iframeElement.style.border = 'none';
+                
+                modalBody.appendChild(iframeElement);
+
+                // Make modal fully full-screen
+                const innerContent = document.querySelector('.modal-inner-content');
+                innerContent.style.width = '100vw';
+                innerContent.style.height = '100vh';
+                innerContent.style.maxWidth = '100vw';
+                innerContent.style.maxHeight = '100vh';
+                innerContent.style.borderRadius = '0';
+                innerContent.style.padding = '50px 10px 10px 10px';
+
+                fullScreenModal.style.setProperty('--glow-color', nodeData.east.color);
+                fullScreenModal.classList.add('active');
+                fullScreenModal.dataset.currentVideo = 'false';
+            } catch (error) {
+                console.error('Error creating PDF iframe:', error);
+                modalBody.innerHTML = '<p style="color: red;">Error loading PDF document.</p>';
             }
         }
 
