@@ -458,6 +458,7 @@
             width: 85%;
             max-height: 80vh;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
             position: relative;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px var(--glow-color, rgba(255,255,255,0.2));
             color: var(--text-color);
@@ -1110,7 +1111,7 @@
 
             try {
                 const iframeElement = document.createElement('iframe');
-                iframeElement.src = 'Images/PrecariUS-Times.pdf#view=FitH&pagemode=none&toolbar=0&scrollbar=1';
+                iframeElement.src = 'Images/PrecariUS-Times.pdf#view=Fit';
                 iframeElement.style.width = '100%';
                 iframeElement.style.height = 'calc(100vh - 60px)'; // Fill available height
                 iframeElement.style.border = 'none';
