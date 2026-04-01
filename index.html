@@ -210,12 +210,8 @@
             background-size: 170%; /* Made images a little smaller */
             background-position: center;
             background-repeat: no-repeat;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transition for hover/focus */
             cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-color); /* Default color for the glow */
         }
 
         .en-1  { top: 4%; left: 50%; } .en-2  { top: 7.5%; left: 67.6%; }
@@ -225,45 +221,26 @@
         .en-9  { top: 96%; left: 50%; } .en-10 { top: 92.5%; left: 32.4%; }
         .en-11 { top: 82.53%; left: 17.47%; } .en-12 { top: 67.6%; left: 7.5%; }
         .en-13 { top: 50%; left: 4%; } .en-14 { top: 32.4%; left: 7.5%; }
-        .en-15 { top: 17.47%; left: 17.47%; } .en-16 { top: 7.5%; left: 32.4%; }
-        
-        .en-1 { background-image: url('Images/north.png'); color: #8b5cf6; }
-        .en-5 { background-image: url('Images/east.png'); color: #ef4444; }
-        .en-9 { background-image: url('Images/south.png'); color: #eab308; }
-        .en-13 { background-image: url('Images/west.png'); color: #06b6d4; }
-
-        .edge-node::after {
-            content: "ZOOM";
-            opacity: 0;
-            color: #fff;
-            font-size: 0.6rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-            transition: opacity 0.3s;
-            text-shadow: 0 0 5px #000;
-            pointer-events: none;
-        }
+        .en-5 { background-image: url('Images/east.png'); }
+        .en-1 { background-image: url('Images/north.png'); }
+        .en-9 { background-image: url('Images/south.png'); }
 
         /* Mobile 2-Tap Focus Effect for edge-nodes */
         .edge-node.mobile-focused {
-            transform: translate(-50%, -50%) scale(2); /* Considerably larger on focus */
-            box-shadow: 0 0 40px currentColor, inset 0 0 10px #fff; /* Add a glow */
+            transform: translate(-50%, -50%) scale(1.2); /* Slightly larger on focus */
+            box-shadow: 0 0 20px currentColor, inset 0 0 10px #fff; /* Add a glow */
             z-index: 20; /* Bring to front */
         }
-        .edge-node.mobile-focused::after {
-            opacity: 1;
-        }
 
+        /* Desktop Hover Effect for edge-node en-1 */
         @media (hover: hover) and (pointer: fine) {
             .edge-node:hover, .edge-node.hovered { /* Apply to all edge-nodes, and add .hovered for event delegation */
-                transform: translate(-50%, -50%) scale(2); /* Significantly larger */
-                box-shadow: 0 0 40px currentColor, inset 0 0 10px #fff;
-                z-index: 20;
-            }
-            .edge-node:hover::after, .edge-node.hovered::after {
-                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+                box-shadow: 0 0 20px currentColor, inset 0 0 10px #fff;
             }
         }
+        .en-13 { background-image: url('Images/west.png'); }
+        .en-15 { top: 17.47%; left: 17.47%; } .en-16 { top: 7.5%; left: 32.4%; }
 
         /* The Petals Container */
         .petals-container {
@@ -770,8 +747,8 @@
             <div class="holonic-container ${stateClass}" id="${id}">
                 <div class="outer-ring"></div>
                 <div class="inner-mask"></div>
-                <div class="edge-nodes-container" onclick="handleEdgeNodeClick(event)" onmouseover="handleEdgeNodeMouseOver(event)" onmouseout="handleEdgeNodeMouseOut(event)">
-                    <div class="edge-node en-1"></div><div class="edge-node en-2"></div>
+                <div class="edge-nodes-container">
+                    <div class="edge-node en-1" onmouseenter="handleMouseEnter('north')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'north')"></div><div class="edge-node en-2"></div>
                     <div class="edge-node en-3"></div><div class="edge-node en-4"></div>
                     <div class="edge-node en-5"></div><div class="edge-node en-6"></div>
                     <div class="edge-node en-7"></div><div class="edge-node en-8"></div>
@@ -781,7 +758,7 @@
                     <div class="edge-node en-15"></div><div class="edge-node en-16"></div>
                 </div>
                 <div class="petals-container">
-                    <div class="petal p-north"></div>
+                    <div class="petal p-north" onmouseover="showHover('north')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'north')"></div>
                     <div class="petal p-ne" onmouseenter="handleMouseEnter('ne')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'ne')"></div>
                     <div class="petal p-east" onmouseenter="handleMouseEnter('east')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'east')"></div>
                     <div class="petal p-se" onmouseenter="handleMouseEnter('se')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'se')"></div>
@@ -798,20 +775,25 @@
 
         // Helper to get nodeId from edge-node class
         function getEdgeNodeId(target) {
+            console.log('getEdgeNodeId - START - received target:', target, 'classList:', target.classList); // Debugging at the very start
             if (target.classList.contains('en-1')) return 'north';
             if (target.classList.contains('en-5')) return 'east';
             if (target.classList.contains('en-9')) return 'south';
             if (target.classList.contains('en-13')) return 'west';
+            console.log('getEdgeNodeId - END - No matching nodeId found for target.'); // Debugging if no match
             return null; // Ensure a value is always returned
         }
 
         // Event delegation for edge-node clicks
         function handleEdgeNodeClick(event) {
             const edgeNode = event.target.closest('.edge-node');
+            console.log('handleEdgeNodeClick - event.target:', event.target, 'closest(.edge-node):', edgeNode); // Debugging
             if (edgeNode) {
                 const nodeId = getEdgeNodeId(edgeNode);
                 if (nodeId) {
-                    handlePetalClick(event, nodeId);
+                    console.log('handleEdgeNodeClick - Identified nodeId:', nodeId); // Debugging
+                    // Pass the specific edgeNode element for focus handling
+                    handleNodeInteraction(event, nodeId, edgeNode);
                 }
             }
         }
@@ -850,10 +832,10 @@
             hideHover();
         }
 
-        // CLICK & TAP EVENTS
-        function handlePetalClick(event, nodeId) {
+        // MASTER INTERACTION HANDLER
+        function handleNodeInteraction(event, nodeId, elementForFocus) {
             if (isTouchDevice) {
-                console.log(`handlePetalClick (mobile) for nodeId: ${nodeId}`);
+                console.log(`handleNodeInteraction (mobile) for nodeId: ${nodeId}`);
                 // Mobile (2-tap system)
                 if (nodeId === 'ne') { // Special handling for the magenta node (Innovation Node)
                     event.preventDefault(); // Prevent default browser behavior (like zooming)
@@ -861,7 +843,7 @@
                         // Tap 1 on mobile for 'ne': Focus & Show Pill
                         clearMobileFocus();
                         mobileFocusedNode = nodeId;
-                        event.currentTarget.classList.add('mobile-focused');
+                        elementForFocus.classList.add('mobile-focused');
                         showHover(nodeId);
                     } else {
                         // Tap 2 on mobile for 'ne': Zoom In (then video will play)
@@ -873,7 +855,7 @@
                     event.preventDefault();
                     clearMobileFocus();
                     mobileFocusedNode = nodeId;
-                    event.currentTarget.classList.add('mobile-focused');
+                    elementForFocus.classList.add('mobile-focused');
                     showHover(nodeId);
                 } else { // Second tap on any other node: Zoom In
                     mobileFocusedNode = null;
@@ -882,10 +864,16 @@
                 }
             } else {
                 // Desktop Click
-                console.log(`handlePetalClick (desktop) for nodeId: ${nodeId}`);
+                console.log(`handleNodeInteraction (desktop) for nodeId: ${nodeId}`);
                 // Always zoom in for 'ne', and the video will be triggered by zoomIn
                 zoomIn(nodeId);
             }
+        }
+
+        // CLICK & TAP EVENTS
+        function handlePetalClick(event, nodeId) {
+            // This function now just passes the correct element to the main interaction handler
+            handleNodeInteraction(event, nodeId, event.currentTarget);
         }
 
         // Tap outside on mobile clears the focus
@@ -1060,6 +1048,17 @@
 
         function closeFullScreenModal() {
             fullScreenModal.classList.remove('active');
+            // Pause and clear video if it was playing
+            console.log('Closing modal. Checking for video to pause and clear.');
+            const videoElement = modalBody.querySelector('video');
+            if (videoElement) {
+                videoElement.pause();
+                videoElement.currentTime = 0; // Reset video to start
+                modalBody.innerHTML = ''; // Clear video content
+            }
+            // IMPORTANT: Reset the video playing flag
+            console.log('Resetting fullScreenModal.dataset.currentVideo to false.');
+            fullScreenModal.dataset.currentVideo = 'false';
         }
 
         // Function to play the promo video
