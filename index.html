@@ -210,6 +210,8 @@
             background-size: 170%; /* Made images a little smaller */
             background-position: center;
             background-repeat: no-repeat;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transition for hover/focus */
+            cursor: pointer;
         }
 
         .en-1  { top: 4%; left: 50%; } .en-2  { top: 7.5%; left: 67.6%; }
@@ -222,6 +224,21 @@
         .en-5 { background-image: url('Images/east.png'); }
         .en-1 { background-image: url('Images/north.png'); }
         .en-9 { background-image: url('Images/south.png'); }
+
+        /* Mobile 2-Tap Focus Effect for edge-nodes */
+        .edge-node.mobile-focused {
+            transform: translate(-50%, -50%) scale(1.2); /* Slightly larger on focus */
+            box-shadow: 0 0 20px currentColor, inset 0 0 10px #fff; /* Add a glow */
+            z-index: 20; /* Bring to front */
+        }
+
+        /* Desktop Hover Effect for edge-node en-1 */
+        @media (hover: hover) and (pointer: fine) {
+            .edge-node:hover, .edge-node.hovered { /* Apply to all edge-nodes, and add .hovered for event delegation */
+                transform: translate(-50%, -50%) scale(1.2);
+                box-shadow: 0 0 20px currentColor, inset 0 0 10px #fff;
+            }
+        }
         .en-13 { background-image: url('Images/west.png'); }
         .en-15 { top: 17.47%; left: 17.47%; } .en-16 { top: 7.5%; left: 32.4%; }
 
@@ -406,11 +423,6 @@
             animation: pulseHint 2s infinite;
         }
 
-        @keyframes pulseHint {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
-        }
-
         /* --- FULL SCREEN MODAL --- */
         #full-screen-modal {
             position: fixed;
@@ -526,6 +538,7 @@
             <p id="layerBoxDesc">Description</p>
             <div class="click-hint">Click here to eXplore full details</div>
         </div>
+
     </div>
 
     <!-- Full Screen Modal -->
@@ -582,23 +595,73 @@
         }, 3140);
 
         function startJourney() {
+            console.log('startJourney called.');
             const intro = document.getElementById('intro-screen');
             intro.style.opacity = '0';
             intro.style.visibility = 'hidden';
 
             const mainApp = document.getElementById('main-app');
             mainApp.classList.add('active');
+            console.log('Main app activated.');
         }
 
 
         // --- HOLONIC BROWSER LOGIC & DATA ---
         const nodeData = {
-            north: { 
-                title: "ENTucationX", color: "#8b5cf6", desc: "Gateway of Learning. Transform curriculum into a hero's journey.",
-                fullText: `<h2>ENTucationX (North Portal)</h2>
-                           <p>Welcome to the Gateway of Learning. In an era of shortening attention spans and outdated memorization models, ENTucationX transforms any educational curriculum into an engaging hero's journey.</p>
-                           <p>Here, students and lifelong learners dive deeply into <b>HiStory, HerStory, and MyStory</b>. Through the integration of the XtheGAME synchronicity engine, education becomes an exploration of personal potential rather than mere test preparation.</p>
-                           <p>Participants can unlock <b>Xperience University certifications</b>, tracking their mastery across multiple disciplines, and engage with an epic 4-book narrative that bridges the gap between entertainment and profound personal evolution.</p>`
+            north: {
+                title: "ENTucation - Core X Algorithm", color: "#8b5cf6", desc: "Gateway of Learning. Transform curriculum into a hero's journey.",
+                fullText: `<h2>OSX Beta Operating System for the Intentional Collision Of Ideas (ICOI)</h2>
+                           <p>Creativity is a form of exploration. We take a journey, an excursion, beyond the boundaries of our everyday operational thinking and experience. We venture into unknown territories looking for new ideas because if we look where we’ve always been, we’ll find what we’ve always seen.</p>
+                           <h3>Part I: The challenge of innovation</h3>
+                           <p>More and more, we are hearing reports from our most technologically advanced companies regarding the innovation challenge.</p>
+                           <p><a href="https://www.innovationexcellence.com/blog/2019/03/10/why-google-can-no-longer-innovate-according-to-a-13-year-veteran/" target="_blank">https://www.innovationexcellence.com/blog/2019/03/10/why-google-can-no-longer-innovate-according-to-a-13-year-veteran/</a></p>
+                           <p>In response, industry leaders such as Google and Facebook are in the process of redesigning their offices to facilitate an emergent solution known as the Accidental Collision of Ideas (ACOI).</p>
+                           <p><a href="https://tech.cornell.edu/news/how-creative-collisions-drive-innovation/" target="_blank">https://tech.cornell.edu/news/how-creative-collisions-drive-innovation/</a></p>
+                           <p>Until now, excepting a modicum of references to serendipity, implementing corporations offer no compelling theory as to why ACOI works, other than to “set the stage”. They claim that the resulting innovations affirm the concept.</p>
+                           <p><a href="https://tech.cornell.edu/news/how-creative-collisions-drive-innovation/" target="_blank">https://tech.cornell.edu/news/how-creative-collisions-drive-innovation/</a></p>
+                           <p>The fact that companies rely on ACOI to enhance innovation has been widely confirmed. It is further supported by the current volume of capital allocated to the design of the ACOI facilitation space.</p>
+                           <p><a href="https://hbr.org/2014/10/workspaces-that-move-people" target="_blank">https://hbr.org/2014/10/workspaces-that-move-people</a></p>
+                           <h3>Part II : ACOI Limitations</h3>
+                           <p>While ACOI is considered the best practice of utilizing physical space to generate creative ideas, there is currently a dearth of practitioners applying cognitive theory to maximize the innovative output of these accidental collisions.</p>
+                           <p>An accident best reflects the current understanding of innovation because existing models cannot objectify why collisions of people produce innovations, even though empirical observation supports that. When creative ideation increases, innovation increases.</p>
+                           <p>At XLabs, our challenge was demonstrating that ACOI could be modeled as an intentional process rather than an accident and yield greater innovative output. Toward this end, XLabs' cognitive gaming process “Xperience” is grounded in the emerging science of innovation where innovation (I) is expressed as the product of 3 dynamic variables:</p>
+                           <ul>
+                               <li>C = Creative Ideation</li>
+                               <li>U = Usefulness -</li>
+                               <li>A = Ability of an entity or individual to implement Useful Creativity</li>
+                           </ul>
+                           <p>So that: C + U + A = I (Innovation)</p>
+                           <p>XG’s purpose is to disrupt the model where accidents (i.e., ACOI) are at the core of the creative ideational process of Fortune 500 companies and reframe a company’s innovation potential as the Intentional Collision of Ideas (ICOI).</p>
+                           <h3>Part III: From Accidents to Intentionality</h3>
+                           <h4>The Application of Cognitive Science</h4>
+                           <p>Given that collisions yield innovation, engineering the collision process to increase the value of C and/or U (>C, >U), would improve the innovation yield of these collisions.</p>
+                           <h4>Game Design</h4>
+                           <p>At XLabs,we have designed a dynamic gamification process to stimulate Creativity and Usefulness.</p>
+                           <p>Step I: PreVergence - Statement of Intention</p>
+                           <p>Step II: Divergence - Convergence (GamePlay)</p>
+                           <p>Divergence is introduced into GamePlay through serendipitously generated images (SGI). Players then converge by connecting or finding a typical pattern between their statement of intention and the SGI.</p>
+                           <p>Step III: Emergence</p>
+                           <p>An entity’s ability (A) to innovate, based on the creative ideation generated by GamePlay, is a function of an entity’s innovation capability (IC).</p>
+                           <p><a href="https://www.jotmi.org/index.php/GT/article/view/910" target="_blank">https://www.jotmi.org/index.php/GT/article/view/910</a></p>
+                           <p>For this reason, in Step III, all GamePlay ideation is subjected to convergence* with a company’s IC.</p>
+                           <p>* XLab is currently exploring the co-development of an IC tool based on the Rainforest Network Score Card.</p>
+                           <h4>Cognitive Science</h4>
+                           <p>Our ability to make sense of the world is directly related to our ability to find meaningful connections between what we know and what is new. Our brains are wired to make sense out of novelty by fitting the latest and divergent into the patterns we know. This is called contextualization.</p>
+                           <p>According to cognitive science, contextualization occurs in the Associative Neural Cortex (ANC). MRI imaging of the brain shows that when we are being creative, our ANC is highly active. This strongly evidences contextualization is neurally linked with creativity and can be intentionally sparked by discovering connections between the known and what is unknown, new, or divergent from what we know.</p>
+                           <p>XG has gamified this process and delivers creative ideation on demand!</p>
+                           <h4>GamePlay</h4>
+                           <p>1) Each player begins GamePlay by stating an intention.</p>
+                           <p>While intention is a statement of future direction, its starting point converges with a player’s present knowledge and awareness.</p>
+                           <p>2) After stating an intention, the player draws a random LC card, which inputs serendipitously generated information (SGI) into GamePlay. Relative to a Player's intention, SGI constitutes varying degrees of unknown, novel, and divergent information.</p>
+                           <p>3) The player connects their intention (LC Card) and the SGI.</p>
+                           <p>Connecting intention to unknown, novel, and divergent SGI activates the player’s ANC and generates creative ideation.</p>
+                           <p>Connecting intention to SGI is the cognitive equivalent of the collision of ideas.</p>
+                           <p>SGI also optimizes the utility of GamePlay’s creative ideation. For a more in-depth discussion on why SGI enhances useful novelty, see the link below on stochastic optimization & machine intelligence.</p>
+                           <p>4) In addition to Life Circle Cards, Relate Cards (RC) and Challenge Cards (CC) are the other two structured variables in GamePlay. RCs and CCs are drawn in response to a Player’s statement of intention. If Players (other than the Player who states the intention) agree with the intention or the Player’s ideation of that intention, they can relate (converge). If they disagree, they can challenge (diverge). The relate/challenge process subjects the player’s intention to varying degrees of convergent or divergent input, further enhancing creative ideation and its utility.</p>
+                           <h4>Conclusion</h4>
+                           <p>GamePlay (Beta Version) is a dynamic gamification process engineered to stimulate Creativity and Usefulness. It is the first genuinely robust operating system for ACOI and transforms random collisions into intentional ideation. This game-like process can be universally customized with any content, demographic, or community.</p>
+                           <h4>Contact</h4>
+                           <p>Karen Stanwood & Jai Hudes<br>408-963-7014 JaiHudes88@gmail.com</p>`
             },
             ne: { 
                 title: "the Big Why", color: "#ec4899", desc: "Bridge: Learning & Connection. AR & MultiVRse tech.",
@@ -607,11 +670,8 @@
                            <p>Here, the physical tabletop game connects to the digital ether. Players use their mobile devices to reveal hidden layers of the cards, mapping their real-world intentions into the digital blockchain. It ensures that our technological advancement always remains anchored to regenerative human connection.</p>`
             },
             east: { 
-                title: "CommUnityX", color: "#ef4444", desc: "Gateway of Connection. Family, legacy, and global villages.",
-                fullText: `<h2>CommUnityX (East Portal)</h2>
-                           <p>Welcome to the Gateway of Connection. Modern social media has created an 'Intention Deficit Disorder,' hyper-connecting our screens while disconnecting our souls. CommUnityX is the antidote.</p>
-                           <p>This portal focuses on family bonding, legacy storytelling, and conflict resolution. It provides a structured space for individuals to map their personal <b>'Book of Life' (TTimecapsule)</b>, heal interpersonal relationships, and help build regenerative global village networks.</p>
-                           <p>It represents the ultimate shift from isolated, extractive individuals to a globally connected, locally interactive community.</p>`
+                title: "PrecariUS TimGalactic-Glocal Xperienceist (author template)", color: "#ef4444", desc: "Click to view PDF document.",
+                fullText: `` // Content will be injected by showEastPdf()
             },
             se: { 
                 title: "Expression Node", color: "#f97316", desc: "Bridge: Connection & Healing. Art, story, and TTimecapsules.",
@@ -680,8 +740,8 @@
             <div class="holonic-container ${stateClass}" id="${id}">
                 <div class="outer-ring"></div>
                 <div class="inner-mask"></div>
-                <div class="edge-nodes-container">
-                    <div class="edge-node en-1"></div><div class="edge-node en-2"></div>
+                <div class="edge-nodes-container" onclick="handleEdgeNodeClick(event)" onmouseover="handleEdgeNodeMouseOver(event)" onmouseout="handleEdgeNodeMouseOut(event)">
+                    <div class="edge-node en-1" onmouseover="showHover('north')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'north')"></div><div class="edge-node en-2"></div>
                     <div class="edge-node en-3"></div><div class="edge-node en-4"></div>
                     <div class="edge-node en-5"></div><div class="edge-node en-6"></div>
                     <div class="edge-node en-7"></div><div class="edge-node en-8"></div>
@@ -691,7 +751,7 @@
                     <div class="edge-node en-15"></div><div class="edge-node en-16"></div>
                 </div>
                 <div class="petals-container">
-                    <div class="petal p-north" onmouseenter="handleMouseEnter('north')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'north')"></div>
+                    <div class="petal p-north"></div> <!-- Functionality moved to en-1 -->
                     <div class="petal p-ne" onmouseenter="handleMouseEnter('ne')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'ne')"></div>
                     <div class="petal p-east" onmouseenter="handleMouseEnter('east')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'east')"></div>
                     <div class="petal p-se" onmouseenter="handleMouseEnter('se')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'se')"></div>
@@ -705,6 +765,49 @@
         }
 
         viewport.innerHTML = createLayerHTML('layer-0', 'state-active');
+
+        // Helper to get nodeId from edge-node class
+        function getEdgeNodeId(target) {
+            if (target.classList.contains('en-1')) return 'north';
+            if (target.classList.contains('en-5')) return 'east';
+            if (target.classList.contains('en-9')) return 'south';
+            if (target.classList.contains('en-13')) return 'west';
+            return null; // Ensure a value is always returned
+        }
+
+        // Event delegation for edge-node clicks
+        function handleEdgeNodeClick(event) {
+            const edgeNode = event.target.closest('.edge-node');
+            if (edgeNode) {
+                const nodeId = getEdgeNodeId(edgeNode);
+                if (nodeId) {
+                    handlePetalClick(event, nodeId);
+                }
+            }
+        }
+
+        // Event delegation for edge-node mouseover (hover)
+        function handleEdgeNodeMouseOver(event) {
+            if (isTouchDevice) return;
+            const edgeNode = event.target.closest('.edge-node');
+            if (edgeNode) {
+                const nodeId = getEdgeNodeId(edgeNode);
+                if (nodeId) {
+                    showHover(nodeId);
+                    edgeNode.classList.add('hovered'); // Add class for visual feedback
+                }
+            }
+        }
+
+        // Event delegation for edge-node mouseout (hover)
+        function handleEdgeNodeMouseOut(event) {
+            if (isTouchDevice) return;
+            const edgeNode = event.target.closest('.edge-node');
+            if (edgeNode) {
+                hideHover();
+                edgeNode.classList.remove('hovered'); // Remove class for visual feedback
+            }
+        }
 
         // MOUSE EVENTS (Desktop Only)
         function handleMouseEnter(nodeId) {
@@ -720,6 +823,7 @@
         // CLICK & TAP EVENTS
         function handlePetalClick(event, nodeId) {
             if (isTouchDevice) {
+                console.log(`handlePetalClick (mobile) for nodeId: ${nodeId}`);
                 // Mobile (2-tap system)
                 if (nodeId === 'ne') { // Special handling for the magenta node (Innovation Node)
                     event.preventDefault(); // Prevent default browser behavior (like zooming)
@@ -748,15 +852,18 @@
                 }
             } else {
                 // Desktop Click
+                console.log(`handlePetalClick (desktop) for nodeId: ${nodeId}`);
                 // Always zoom in for 'ne', and the video will be triggered by zoomIn
                 zoomIn(nodeId);
             }
         }
 
         // Tap outside on mobile clears the focus
+        // Modified clearMobileFocus to also clear edge-nodes
         document.addEventListener('touchstart', function(e) {
-            if (!e.target.classList.contains('petal')) {
+            if (!e.target.closest('.petal') && !e.target.closest('.edge-node')) { // Check for both petals and edge-nodes
                 if (mobileFocusedNode) {
+                    console.log('Clearing mobile focus due to outside tap.');
                     mobileFocusedNode = null;
                     clearMobileFocus();
                     hideHover();
@@ -765,7 +872,7 @@
         }, {passive: true});
 
         function clearMobileFocus() {
-            document.querySelectorAll('.petal').forEach(p => p.classList.remove('mobile-focused'));
+            document.querySelectorAll('.petal, .edge-node').forEach(el => el.classList.remove('mobile-focused')); // Clear both
         }
 
         // --- VISUAL & ANIMATION LOGIC ---
@@ -774,21 +881,14 @@
             hoverTitle.innerText = data.title;
             hoverPreview.style.setProperty('--glow-color', data.color);
             hoverPreview.classList.add('active');
-
-            // Hide the main bottom banner immediately to prevent clutter
-            layerInfoBox.classList.remove('visible');
         }
 
         function hideHover() {
             hoverPreview.classList.remove('active');
-
-            // If we are deep in a node, bring the bottom banner back up smoothly
-            if (historyStack.length > 0) {
-                layerInfoBox.classList.add('visible');
-            }
         }
 
         function zoomIn(nodeId) {
+            console.log(`zoomIn called for nodeId: ${nodeId}`);
             hideHover(); 
 
             const data = nodeData[nodeId];
@@ -825,37 +925,18 @@
             layerBoxDesc.innerText = data.desc;
             layerInfoBox.style.setProperty('--glow-color', data.color);
 
-            // Delay showing the bottom box slightly for dramatic effect, UNLESS it's the 'ne' node
-            if (nodeId !== 'ne') { // Only show layerInfoBox for non-'ne' nodes
-                layerBoxTimeout = setTimeout(() => {
-                    if (!hoverPreview.classList.contains('active')) {
-                        layerInfoBox.classList.add('visible');
-                    }
-                }, 1000);
-            } else {
-                // Ensure layerInfoBox is hidden if 'ne' is clicked
-                layerInfoBox.classList.remove('visible');
-            }
-
-            // Delay showing the bottom box slightly for dramatic effect
-            layerBoxTimeout = setTimeout(() => {
-                if (!hoverPreview.classList.contains('active')) {
-                    layerInfoBox.classList.add('visible');
-                }
-            }, 1000);
-
             setTimeout(() => {
                 if(document.getElementById(oldLayerId) && document.getElementById(oldLayerId).classList.contains('state-zoomed-in')) {
                     document.getElementById(oldLayerId).style.display = 'none';
                 }
             }, 4000); 
 
-            // Trigger video playback after zoom animation for 'ne' node
-            if (nodeId === 'ne') {
-                setTimeout(() => {
-                    playPromoVideo();
-                }, 3500); // Play video slightly before the old layer fully disappears
-            }
+            // Always delay showing the bottom box slightly for dramatic effect
+            layerBoxTimeout = setTimeout(() => {
+                if (!hoverPreview.classList.contains('active')) {
+                    layerInfoBox.classList.add('visible');
+                }
+            }, 1000);
         }
 
         function zoomOut() {
@@ -897,22 +978,22 @@
                 mainTitle.innerText = parentData.title;
                 mainTitle.style.color = parentData.color;
                 mainTitle.style.textShadow = `0 0 20px ${parentData.color}`;
-
-                // Re-populate and show bottom box for the new parent layer
-                layerBoxTitle.innerText = parentData.title;
-                layerBoxDesc.innerText = parentData.desc;
-                layerInfoBox.style.setProperty('--glow-color', parentData.color);
-                layerBoxTimeout = setTimeout(() => {
-                    if (!hoverPreview.classList.contains('active')) {
-                        layerInfoBox.classList.add('visible');
-                    }
-                }, 1000);
             }
         }
 
         // --- FULL SCREEN MODAL LOGIC ---
         function openFullScreenModal() {
             if(!currentNode) return;
+
+            // Special handling for media nodes
+            if (currentNode === 'ne') {
+                playPromoVideo();
+                return;
+            }
+            if (currentNode === 'east') {
+                showEastPdf();
+                return;
+            }
 
             // If a video is playing, don't open the modal for text content
             if (fullScreenModal.dataset.currentVideo === 'true') {
@@ -929,6 +1010,24 @@
 
         function closeFullScreenModal() {
             fullScreenModal.classList.remove('active');
+            // Pause and clear video if it was playing
+            console.log('Closing modal. Checking for media to pause and clear.');
+            const videoElement = modalBody.querySelector('video');
+            if (videoElement) {
+                videoElement.pause();
+                videoElement.currentTime = 0; // Reset video to start
+            }
+            
+            // Reset any full-screen inline styles from PDF view
+            const innerContent = document.querySelector('.modal-inner-content');
+            innerContent.style.width = '';
+            innerContent.style.height = '';
+            innerContent.style.maxWidth = '';
+            innerContent.style.maxHeight = '';
+            innerContent.style.borderRadius = '';
+            innerContent.style.padding = '';
+
+            setTimeout(() => { modalBody.innerHTML = ''; }, 500); // Clear content after fade
         }
 
         // Function to play the promo video
@@ -973,6 +1072,38 @@
             } catch (error) {
                 console.error('Error creating or playing video element:', error);
                 modalBody.innerHTML = '<p style="color: red;">An unexpected error occurred while trying to play the video.</p>';
+            }
+        }
+
+        // Function to show PDF for East Node
+        function showEastPdf() {
+            console.log('Attempting to show PDF: Images/PrecariUS-Times.pdf');
+            modalBody.innerHTML = '';
+
+            try {
+                const iframeElement = document.createElement('iframe');
+                iframeElement.src = 'Images/PrecariUS-Times.pdf#view=FitH&pagemode=none&toolbar=0&scrollbar=1';
+                iframeElement.style.width = '100%';
+                iframeElement.style.height = 'calc(100vh - 60px)'; // Fill available height
+                iframeElement.style.border = 'none';
+                
+                modalBody.appendChild(iframeElement);
+
+                // Make modal fully full-screen
+                const innerContent = document.querySelector('.modal-inner-content');
+                innerContent.style.width = '100vw';
+                innerContent.style.height = '100vh';
+                innerContent.style.maxWidth = '100vw';
+                innerContent.style.maxHeight = '100vh';
+                innerContent.style.borderRadius = '0';
+                innerContent.style.padding = '50px 10px 10px 10px';
+
+                fullScreenModal.style.setProperty('--glow-color', nodeData.east.color);
+                fullScreenModal.classList.add('active');
+                fullScreenModal.dataset.currentVideo = 'false';
+            } catch (error) {
+                console.error('Error creating PDF iframe:', error);
+                modalBody.innerHTML = '<p style="color: red;">Error loading PDF document.</p>';
             }
         }
 
