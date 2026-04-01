@@ -546,6 +546,16 @@
         </div>
     </div>
 
+    <!-- PDF Viewer (Mobile Only) -->
+    <div id="pdf-viewer">
+        <div class="pdf-header">
+            <button class="pdf-back-btn" onclick="hidePdfView()">← Back to The Game</button>
+        </div>
+        <div id="pdf-content">
+            <!-- PDF Iframe will be injected here -->
+        </div>
+    </div>
+
     <!-- Full Screen Modal -->
     <div id="full-screen-modal">
         <div class="modal-inner-content">
@@ -1106,34 +1116,56 @@
 
         // Function to show PDF for East Node
         function showEastPdf() {
-            console.log('Attempting to show PDF: Images/PrecariUS-Times.pdf');
-            modalBody.innerHTML = '';
+            if (isTouchDevice) {
+                // --- Mobile-only PDF View Flow ---
+                console.log('Mobile: Showing dedicated PDF view');
+                const pdfViewer = document.getElementById('pdf-viewer');
+                const pdfContent = document.getElementById('pdf-content');
+                const mainApp = document.getElementById('main-app');
 
-            try {
-                const iframeElement = document.createElement('iframe');
-                iframeElement.src = 'Images/PrecariUS-Times.pdf#view=Fit';
-                iframeElement.style.width = '100%';
-                iframeElement.style.height = 'calc(100vh - 60px)'; // Fill available height
-                iframeElement.style.border = 'none';
-                
-                modalBody.appendChild(iframeElement);
+                pdfContent.innerHTML = `<iframe src="Images/PrecariUS-Times.pdf#view=Fit"></iframe>`;
+                pdfViewer.querySelector('.pdf-header').style.setProperty('--glow-color', nodeData.east.color);
 
-                // Make modal fully full-screen
-                const innerContent = document.querySelector('.modal-inner-content');
-                innerContent.style.width = '100vw';
-                innerContent.style.height = '100vh';
-                innerContent.style.maxWidth = '100vw';
-                innerContent.style.maxHeight = '100vh';
-                innerContent.style.borderRadius = '0';
-                innerContent.style.padding = '50px 10px 10px 10px';
+                mainApp.style.display = 'none';
+                pdfViewer.style.display = 'flex';
 
-                fullScreenModal.style.setProperty('--glow-color', nodeData.east.color);
-                fullScreenModal.classList.add('active');
-                fullScreenModal.dataset.currentVideo = 'false';
-            } catch (error) {
-                console.error('Error creating PDF iframe:', error);
-                modalBody.innerHTML = '<p style="color: red;">Error loading PDF document.</p>';
+            } else {
+                // --- Desktop Full-Screen Modal Flow ---
+                console.log('Desktop: Showing PDF in full-screen modal');
+                modalBody.innerHTML = '';
+
+                try {
+                    const iframeElement = document.createElement('iframe');
+                    iframeElement.src = 'Images/PrecariUS-Times.pdf#view=Fit';
+                    iframeElement.style.width = '100%';
+                    iframeElement.style.height = 'calc(100vh - 60px)'; // Fill available height
+                    iframeElement.style.border = 'none';
+                    
+                    modalBody.appendChild(iframeElement);
+
+                    // Make modal fully full-screen
+                    const innerContent = document.querySelector('.modal-inner-content');
+                    innerContent.style.width = '100vw';
+                    innerContent.style.height = '100vh';
+                    innerContent.style.maxWidth = '100vw';
+                    innerContent.style.maxHeight = '100vh';
+                    innerContent.style.borderRadius = '0';
+                    innerContent.style.padding = '50px 10px 10px 10px';
+
+                    fullScreenModal.style.setProperty('--glow-color', nodeData.east.color);
+                    fullScreenModal.classList.add('active');
+                } catch (error) {
+                    console.error('Error creating PDF iframe:', error);
+                    modalBody.innerHTML = '<p style="color: red;">Error loading PDF document.</p>';
+                }
             }
+        }
+
+        function hidePdfView() {
+            const pdfViewer = document.getElementById('pdf-viewer');
+            const mainApp = document.getElementById('main-app');
+            pdfViewer.style.display = 'none';
+            mainApp.style.display = 'flex';
         }
 
     </script>
