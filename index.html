@@ -221,9 +221,17 @@
         .en-9  { top: 96%; left: 50%; } .en-10 { top: 92.5%; left: 32.4%; }
         .en-11 { top: 82.53%; left: 17.47%; } .en-12 { top: 67.6%; left: 7.5%; }
         .en-13 { top: 50%; left: 4%; } .en-14 { top: 32.4%; left: 7.5%; }
-        .en-5 { background-image: url('Images/east.png'); }
+        .en-15 { top: 17.47%; left: 17.47%; } .en-16 { top: 7.5%; left: 32.4%; }
+        
         .en-1 { background-image: url('Images/north.png'); }
+        .en-5 { background-image: url('Images/east.png'); }
         .en-9 { background-image: url('Images/south.png'); }
+        .en-13 { background-image: url('Images/west.png'); }
+
+        .en-1, .en-5, .en-9, .en-13 {
+            width: 10.5%;
+            height: 10.5%;
+        }
 
         /* Mobile 2-Tap Focus Effect for edge-nodes */
         .edge-node.mobile-focused {
@@ -239,8 +247,6 @@
                 box-shadow: 0 0 20px currentColor, inset 0 0 10px #fff;
             }
         }
-        .en-13 { background-image: url('Images/west.png'); }
-        .en-15 { top: 17.47%; left: 17.47%; } .en-16 { top: 7.5%; left: 32.4%; }
 
         /* The Petals Container */
         .petals-container {
