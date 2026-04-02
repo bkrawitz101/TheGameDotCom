@@ -210,8 +210,12 @@
             background-size: 170%; /* Made images a little smaller */
             background-position: center;
             background-repeat: no-repeat;
-            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transition for hover/focus */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s;
             cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color); /* Default fallback for the glow */
         }
 
         .en-1  { top: 4%; left: 50%; } .en-2  { top: 7.5%; left: 67.6%; }
@@ -223,28 +227,47 @@
         .en-13 { top: 50%; left: 4%; } .en-14 { top: 32.4%; left: 7.5%; }
         .en-15 { top: 17.47%; left: 17.47%; } .en-16 { top: 7.5%; left: 32.4%; }
         
-        .en-1 { background-image: url('Images/north.png'); }
-        .en-5 { background-image: url('Images/east.png'); }
-        .en-9 { background-image: url('Images/south.png'); }
-        .en-13 { background-image: url('Images/west.png'); }
+        .en-1 { background-image: url('Images/north.png'); color: #8b5cf6; }
+        .en-5 { background-image: url('Images/east.png'); color: #ef4444; }
+        .en-9 { background-image: url('Images/south.png'); color: #eab308; }
+        .en-13 { background-image: url('Images/west.png'); color: #06b6d4; }
 
         .en-1, .en-5, .en-9, .en-13 {
             width: 10.5%;
             height: 10.5%;
         }
 
-        /* Mobile 2-Tap Focus Effect for edge-nodes */
-        .edge-node.mobile-focused {
-            transform: translate(-50%, -50%) scale(1.2); /* Slightly larger on focus */
-            box-shadow: 0 0 20px currentColor, inset 0 0 10px #fff; /* Add a glow */
-            z-index: 20; /* Bring to front */
+        .en-1::after, .en-5::after, .en-9::after, .en-13::after {
+            content: "ZOOM";
+            opacity: 0;
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: opacity 0.3s;
+            text-shadow: 0 0 5px #000;
+            pointer-events: none;
         }
 
-        /* Desktop Hover Effect for edge-node en-1 */
+        /* Mobile 2-Tap Focus Effect for edge-nodes */
+        .edge-node.mobile-focused {
+            transform: translate(-50%, -50%) scale(1.5);
+            box-shadow: 0 0 40px currentColor, inset 0 0 10px #fff;
+            z-index: 20; /* Bring to front */
+        }
+        .edge-node.mobile-focused::after {
+            opacity: 1;
+        }
+
+        /* Desktop Hover Effect for edge-nodes */
         @media (hover: hover) and (pointer: fine) {
-            .edge-node:hover, .edge-node.hovered { /* Apply to all edge-nodes, and add .hovered for event delegation */
-                transform: translate(-50%, -50%) scale(1.2);
-                box-shadow: 0 0 20px currentColor, inset 0 0 10px #fff;
+            .edge-node:hover, .edge-node.hovered {
+                transform: translate(-50%, -50%) scale(1.5);
+                box-shadow: 0 0 40px currentColor, inset 0 0 10px #fff;
+                z-index: 20;
+            }
+            .edge-node:hover::after, .edge-node.hovered::after {
+                opacity: 1;
             }
         }
 
