@@ -233,9 +233,8 @@
         .en-13 { background-image: url('Images/west.png'); color: #06b6d4; }
 
         .en-1, .en-5, .en-9, .en-13 {
-            width: 10.5% !important;
-            height: 10.5% !important;
-            cursor: pointer !important;
+            width: 10.5%;
+            height: 10.5%;
         }
 
         .en-1::after, .en-5::after, .en-9::after, .en-13::after {
@@ -261,7 +260,8 @@
         }
 
         /* Desktop Hover Effect for edge-nodes */
-        .edge-node:hover, .edge-node.hovered {
+        @media (hover: hover) and (pointer: fine) {
+            .edge-node:hover, .edge-node.hovered {
                 transform: translate(-50%, -50%) scale(1.5);
                 box-shadow: 0 0 40px currentColor, inset 0 0 10px #fff;
                 z-index: 20;
@@ -269,6 +269,7 @@
             .edge-node:hover::after, .edge-node.hovered::after {
                 opacity: 1;
             }
+        }
 
         /* The Petals Container */
         .petals-container {
@@ -277,8 +278,7 @@
             width: 100%; height: 100%;
             border-radius: 50%;
             z-index: 10;
-            pointer-events: none;
-}
+        }
 
         .petal {
             position: absolute;
@@ -291,8 +291,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            pointer-events: auto;
-}
+        }
 
         /* 
            Desktop Hover Effect 
@@ -1061,7 +1060,7 @@
 
         // --- 3. MOBILE & TOUCH LOGIC ---
         // We detect touch devices reliably to enable the 2-tap system
-        let isTouchDevice = false; // Forced desktop mode
+        let isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
         let mobileFocusedNode = null; // Tracks which node is highlighted on tap 1
 
         function createLayerHTML(id, stateClass) {
@@ -1072,15 +1071,15 @@
                 <div class="edge-nodes-container" onclick="handleEdgeNodeClick(event)" onmouseover="handleEdgeNodeMouseOver(event)" onmouseout="handleEdgeNodeMouseOut(event)">
                     <div class="edge-node en-1" onmouseover="showHover('north')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'north')"></div><div class="edge-node en-2"></div>
                     <div class="edge-node en-3"></div><div class="edge-node en-4"></div>
-                    <div class="edge-node en-5" onmouseover="showHover('east')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'east')"></div><div class="edge-node en-6"></div>
+                    <div class="edge-node en-5"></div><div class="edge-node en-6"></div>
                     <div class="edge-node en-7"></div><div class="edge-node en-8"></div>
-                    <div class="edge-node en-9" onmouseover="showHover('south')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'south')"></div><div class="edge-node en-10"></div>
+                    <div class="edge-node en-9"></div><div class="edge-node en-10"></div>
                     <div class="edge-node en-11"></div><div class="edge-node en-12"></div>
-                    <div class="edge-node en-13" onmouseover="showHover('west')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'west')"></div><div class="edge-node en-14"></div>
+                    <div class="edge-node en-13"></div><div class="edge-node en-14"></div>
                     <div class="edge-node en-15"></div><div class="edge-node en-16"></div>
                 </div>
                 <div class="petals-container">
-                    <div class="petal p-north" onmouseenter="handleMouseEnter('north')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'north')"></div>
+                    <div class="petal p-north"></div> <!-- Functionality moved to en-1 -->
                     <div class="petal p-ne" onmouseenter="handleMouseEnter('ne')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'ne')"></div>
                     <div class="petal p-east" onmouseenter="handleMouseEnter('east')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'east')"></div>
                     <div class="petal p-se" onmouseenter="handleMouseEnter('se')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'se')"></div>
