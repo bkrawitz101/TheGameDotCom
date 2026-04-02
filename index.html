@@ -1061,7 +1061,7 @@
 
         // --- 3. MOBILE & TOUCH LOGIC ---
         // We detect touch devices reliably to enable the 2-tap system
-        let isTouchDevice = false; // Forced desktop mode
+        let isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
         let mobileFocusedNode = null; // Tracks which node is highlighted on tap 1
 
         function createLayerHTML(id, stateClass) {
