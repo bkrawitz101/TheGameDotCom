@@ -174,9 +174,9 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             border-radius: 50%;
-            background: conic-gradient(from -22.5deg, 
-                #8b5cf6, #ec4899, #ef4444, #f97316, 
-                #eab308, #22c55e, #06b6d4, #3b82f6, #8b5cf6);
+            background: conic-gradient(from 0deg, 
+                #ec4899, #ef4444, #f97316, #eab308, 
+                #22c55e, #06b6d4, #3b82f6, #8b5cf6, #ec4899);
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
         }
 
@@ -227,15 +227,17 @@
         .en-13 { top: 50%; left: 4%; } .en-14 { top: 32.4%; left: 7.5%; }
         .en-15 { top: 17.47%; left: 17.47%; } .en-16 { top: 7.5%; left: 32.4%; }
         
-        .en-1 { background-image: url('Images/north.png'); color: #8b5cf6; }
-        .en-5 { background-image: url('Images/east.png'); color: #ef4444; }
-        .en-9 { background-image: url('Images/south.png'); color: #eab308; }
-        .en-13 { background-image: url('Images/west.png'); color: #06b6d4; }
+        .en-1 { background-image: url('Images/north.png'); color: #ec4899; }
+        .en-5 { background-image: url('Images/east.png'); color: #f97316; }
+        .en-9 { background-image: url('Images/south.png'); color: #22c55e; }
+        .en-13 { background-image: url('Images/west.png'); color: #3b82f6; }
 
         .en-1, .en-5, .en-9, .en-13 {
-            width: 10.5% !important;
-            height: 10.5% !important;
+            width: 10% !important;
+            height: 10% !important;
+            background-size: 130%;
             cursor: pointer !important;
+            z-index: 20;
         }
 
         .en-1::after, .en-5::after, .en-9::after, .en-13::after {
@@ -261,7 +263,8 @@
         }
 
         /* Desktop Hover Effect for edge-nodes */
-        .edge-node:hover, .edge-node.hovered {
+        @media (hover: hover) and (pointer: fine) {
+            .edge-node:hover, .edge-node.hovered {
                 transform: translate(-50%, -50%) scale(1.5);
                 box-shadow: 0 0 40px currentColor, inset 0 0 10px #fff;
                 z-index: 20;
@@ -269,6 +272,7 @@
             .edge-node:hover::after, .edge-node.hovered::after {
                 opacity: 1;
             }
+        }
 
         /* The Petals Container */
         .petals-container {
@@ -278,7 +282,7 @@
             border-radius: 50%;
             z-index: 10;
             pointer-events: none;
-}
+        }
 
         .petal {
             position: absolute;
@@ -286,13 +290,13 @@
             border-radius: 50%;
             mix-blend-mode: var(--blend-mode);
             cursor: pointer;
+            pointer-events: auto;
             transition: all 0.3s ease;
             opacity: 0.85;
             display: flex;
             justify-content: center;
             align-items: center;
-            pointer-events: auto;
-}
+        }
 
         /* 
            Desktop Hover Effect 
@@ -335,14 +339,14 @@
             text-shadow: 0 0 5px #000;
         }
 
-        .p-north { top: 24.72%; left: 33.38%; background-color: #8b5cf6; color: #8b5cf6; } 
-        .p-ne    { top: 24.72%; left: 45.62%; background-color: #ec4899; color: #ec4899; } 
-        .p-east  { top: 33.38%; left: 54.28%; background-color: #ef4444; color: #ef4444; } 
-        .p-se    { top: 45.62%; left: 54.28%; background-color: #f97316; color: #f97316; } 
-        .p-south { top: 54.28%; left: 45.62%; background-color: #eab308; color: #eab308; } 
-        .p-sw    { top: 54.28%; left: 33.38%; background-color: #22c55e; color: #22c55e; } 
-        .p-west  { top: 45.62%; left: 24.72%; background-color: #06b6d4; color: #06b6d4; } 
-        .p-nw    { top: 33.38%; left: 24.72%; background-color: #3b82f6; color: #3b82f6; } 
+        .p-north { top: 28.18%; left: 28.18%; background-color: #8b5cf6; color: #8b5cf6; } 
+        .p-ne    { top: 23.5%; left: 39.5%; background-color: #ec4899; color: #ec4899; } 
+        .p-east  { top: 28.18%; left: 50.82%; background-color: #ef4444; color: #ef4444; } 
+        .p-se    { top: 39.5%; left: 55.5%; background-color: #f97316; color: #f97316; } 
+        .p-south { top: 50.82%; left: 50.82%; background-color: #eab308; color: #eab308; } 
+        .p-sw    { top: 55.5%; left: 39.5%; background-color: #22c55e; color: #22c55e; } 
+        .p-west  { top: 50.82%; left: 28.18%; background-color: #06b6d4; color: #06b6d4; } 
+        .p-nw    { top: 39.5%; left: 23.5%; background-color: #3b82f6; color: #3b82f6; } 
 
         /* Center Galaxy Core */
         .center-core {
@@ -1061,7 +1065,7 @@
 
         // --- 3. MOBILE & TOUCH LOGIC ---
         // We detect touch devices reliably to enable the 2-tap system
-        let isTouchDevice = false; // Forced desktop mode
+        let isTouchDevice = false; // forced desktop mode
         let mobileFocusedNode = null; // Tracks which node is highlighted on tap 1
 
         function createLayerHTML(id, stateClass) {
@@ -1069,7 +1073,7 @@
             <div class="holonic-container ${stateClass}" id="${id}">
                 <div class="outer-ring"></div>
                 <div class="inner-mask"></div>
-                <div class="edge-nodes-container" onclick="handleEdgeNodeClick(event)" onmouseover="handleEdgeNodeMouseOver(event)" onmouseout="handleEdgeNodeMouseOut(event)">
+                <div class="edge-nodes-container" onmouseover="handleEdgeNodeMouseOver(event)" onmouseout="handleEdgeNodeMouseOut(event)">
                     <div class="edge-node en-1" onmouseover="showHover('north')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'north')"></div><div class="edge-node en-2"></div>
                     <div class="edge-node en-3"></div><div class="edge-node en-4"></div>
                     <div class="edge-node en-5" onmouseover="showHover('east')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'east')"></div><div class="edge-node en-6"></div>
@@ -1238,7 +1242,7 @@
             newLayer.className = 'holonic-container state-active';
 
             const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim();
-            newLayer.querySelector('.outer-ring').style.background = `conic-gradient(from -22.5deg, ${data.color}, ${bgColor}, ${data.color})`;
+            newLayer.querySelector('.outer-ring').style.background = `conic-gradient(from 0deg, ${data.color}, ${bgColor}, ${data.color})`;
 
             historyStack.push(nodeId);
 
