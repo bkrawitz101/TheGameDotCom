@@ -168,6 +168,11 @@
             z-index: 5;
         }
 
+        /* Ensure pointer events are completely disabled on zooming/zoomed out layers */
+        .state-zoomed-in *, .state-zoomed-out * {
+            pointer-events: none !important;
+        }
+
         /* Outer Rotating Gradient Ring */
         .outer-ring {
             position: absolute;
@@ -1089,7 +1094,7 @@
                     <div class="petal p-west" onmouseenter="handleMouseEnter('west')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'west')"></div>
                     <div class="petal p-nw" onmouseenter="handleMouseEnter('nw')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'nw')"></div>
                 </div>
-                <div class="center-core" onclick="zoomOut()"></div>
+                <div class="center-core" onclick="zoomOut(event)"></div>
             </div>`;
         }
 
@@ -1268,7 +1273,8 @@
             }, 1000);
         }
 
-        function zoomOut() {
+        function zoomOut(event) {
+            if (event) event.stopPropagation(); // Prevents click from bubbling to any elements behind it
             mobileFocusedNode = null;
             clearMobileFocus();
             hideHover();
