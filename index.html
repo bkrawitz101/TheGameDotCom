@@ -1067,7 +1067,7 @@
             <div class="holonic-container ${stateClass}" id="${id}">
                 <div class="outer-ring"></div>
                 <div class="inner-mask"></div>
-                <div class="edge-nodes-container" onclick="handleEdgeNodeClick(event)" onmouseover="handleEdgeNodeMouseOver(event)" onmouseout="handleEdgeNodeMouseOut(event)">
+                <div class="edge-nodes-container" onmouseover="handleEdgeNodeMouseOver(event)" onmouseout="handleEdgeNodeMouseOut(event)">
                     <div class="edge-node en-1" onmouseover="showHover('north')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'north')"></div><div class="edge-node en-2"></div>
                     <div class="edge-node en-3"></div><div class="edge-node en-4"></div>
                     <div class="edge-node en-5" onmouseover="showHover('east')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'east')"></div><div class="edge-node en-6"></div>
@@ -1100,17 +1100,6 @@
             if (target.classList.contains('en-9')) return 'south';
             if (target.classList.contains('en-13')) return 'west';
             return null; // Ensure a value is always returned
-        }
-
-        // Event delegation for edge-node clicks
-        function handleEdgeNodeClick(event) {
-            const edgeNode = event.target.closest('.edge-node');
-            if (edgeNode) {
-                const nodeId = getEdgeNodeId(edgeNode);
-                if (nodeId) {
-                    handlePetalClick(event, nodeId);
-                }
-            }
         }
 
         // Event delegation for edge-node mouseover (hover)
