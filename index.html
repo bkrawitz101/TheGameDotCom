@@ -243,26 +243,11 @@
             cursor: pointer !important;
         }
 
-        .en-1::after, .en-5::after, .en-9::after, .en-13::after {
-            content: "ZOOM";
-            opacity: 0;
-            color: #fff;
-            font-size: 0.65rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-            transition: opacity 0.3s;
-            text-shadow: 0 0 5px #000;
-            pointer-events: none;
-        }
-
         /* Mobile 2-Tap Focus Effect for edge-nodes */
         .edge-node.mobile-focused {
             transform: translate(-50%, -50%) scale(1.5);
             box-shadow: 0 0 40px currentColor, inset 0 0 10px #fff;
             z-index: 20; /* Bring to front */
-        }
-        .edge-node.mobile-focused::after {
-            opacity: 1;
         }
 
         /* Desktop Hover Effect for edge-nodes */
@@ -270,9 +255,6 @@
                 transform: translate(-50%, -50%) scale(1.5);
                 box-shadow: 0 0 40px currentColor, inset 0 0 10px #fff;
                 z-index: 20;
-            }
-            .edge-node:hover::after, .edge-node.hovered::after {
-                opacity: 1;
             }
 
         /* The Petals Container */
@@ -310,9 +292,6 @@
                 opacity: 1;
                 box-shadow: 0 0 40px currentColor;
             }
-            .petal:hover::after {
-                opacity: 1;
-            }
         }
 
         /* 
@@ -324,20 +303,6 @@
             z-index: 20;
             opacity: 1;
             box-shadow: 0 0 40px currentColor;
-        }
-        .petal.mobile-focused::after {
-            opacity: 1;
-        }
-
-        .petal::after {
-            content: "ZOOM";
-            opacity: 0;
-            color: #fff;
-            font-size: 0.7rem;
-            font-weight: bold;
-            letter-spacing: 2px;
-            transition: opacity 0.3s;
-            text-shadow: 0 0 5px #000;
         }
 
         .p-north { top: 24.72%; left: 33.38%; background-color: #8b5cf6; color: #8b5cf6; } 
@@ -456,6 +421,26 @@
             letter-spacing: 2px;
             opacity: 0.6;
             animation: pulseHint 2s infinite;
+        }
+
+        /* --- Mobile-Specific Adjustments --- */
+        @media (max-width: 768px) {
+            #layer-info-box {
+                width: 90%;
+                max-width: 90vw;
+                padding: 15px 20px;
+                bottom: 20px;
+                border-radius: 20px;
+            }
+            #layer-info-box h3 {
+                font-size: 1rem;
+                margin-bottom: 4px;
+            }
+            #layer-info-box p {
+                font-size: 0.9rem;
+                margin-bottom: 8px;
+            }
+            .click-hint { font-size: 0.7rem; }
         }
 
         /* --- FULL SCREEN MODAL --- */
