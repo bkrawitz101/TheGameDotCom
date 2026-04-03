@@ -53,7 +53,6 @@
             font-size: clamp(1.2rem, 3vw, 2.5rem);
             font-weight: 300;
             letter-spacing: 6px;
-            text-transform: uppercase;
             cursor: pointer;
             padding: 20px 40px;
             border: 1px solid transparent;
@@ -106,7 +105,6 @@
             margin: 0;
             font-weight: 300;
             letter-spacing: 8px;
-            text-transform: uppercase;
             text-shadow: 0 0 15px var(--text-color);
             color: var(--text-color);
             font-size: clamp(1.5rem, 4vw, 2.5rem);
@@ -118,7 +116,6 @@
             color: #88c0d0;
             letter-spacing: 2px;
             font-size: 0.9rem;
-            text-transform: uppercase;
             opacity: 0;
             transition: opacity 0.5s;
         }
@@ -367,7 +364,6 @@
             font-weight: 400;
             letter-spacing: 2px;
             font-size: 1.1rem;
-            text-transform: uppercase;
         }
 
         /* --- THE BOTTOM CLICKABLE BOX (Visible only when zoomed in) --- */
@@ -406,7 +402,6 @@
             font-weight: 400;
             letter-spacing: 2px;
             color: var(--glow-color, var(--text-color));
-            text-transform: uppercase;
         }
 
         #layer-info-box p {
@@ -417,7 +412,6 @@
 
         .click-hint {
             font-size: 0.75rem;
-            text-transform: uppercase;
             letter-spacing: 2px;
             opacity: 0.6;
             animation: pulseHint 2s infinite;
@@ -568,7 +562,7 @@
         <div id="layer-info-box" onclick="openFullScreenModal()">
             <h3 id="layerBoxTitle">Title</h3>
             <p id="layerBoxDesc">Description</p>
-            <div class="click-hint">Click here to eXplore full details</div>
+            <div class="click-hint" id="layerBoxHint">Click here to eXplore full details</div>
         </div>
 
     </div>
@@ -641,7 +635,7 @@
         // --- HOLONIC BROWSER LOGIC & DATA ---
         const nodeData = {
             north: {
-                title: "ENTucation - Core X Algorithm", color: "#8b5cf6", desc: "Gateway of Learning. Transform curriculum into a hero's journey.",
+                title: "Xperience —the♾️Game", infoTitle: "A game where everyone W.I.N.s", color: "#8b5cf6", desc: "physical-digital-virtual: GameStorm, CoOpoly, XtheBS, metaVRse, 108 ways to play…", actionLine: "Click here to eXplore more details",
                 fullText: `<h2>OSX Beta Operating System for the Intentional Collision Of Ideas (ICOI)</h2>
                            <p>Creativity is a form of exploration. We take a journey, an excursion, beyond the boundaries of our everyday operational thinking and experience. We venture into unknown territories looking for new ideas because if we look where we’ve always been, we’ll find what we’ve always seen.</p>
                            <h3>Part I: The challenge of innovation</h3>
@@ -696,13 +690,13 @@
                            <p>Karen Stanwood & Jai Hudes<br>408-963-7014 JaiHudes88@gmail.com</p>`
             },
             ne: { 
-                title: "the Big Why", color: "#ec4899", desc: "Bridge: Learning & Connection. AR & MultiVRse tech.",
+                title: "the Big Why?", infoTitle: "DreaMyth Reality ♾️Game Storytelling", color: "#ec4899", desc: "Consciousness Bridge: Connect & Learn.- XRX MultiVRse .", actionLine: "Click here to eXplore more details",
                 fullText: `<h2>Innovation Node</h2>
                            <p>Located between the portals of Learning and Connection, the Innovation Node is where technology serves humanity. This is the integration point for the <b>XR MultiVRse</b> and Augmented Reality (AR) tools.</p>
                            <p>Here, the physical tabletop game connects to the digital ether. Players use their mobile devices to reveal hidden layers of the cards, mapping their real-world intentions into the digital blockchain. It ensures that our technological advancement always remains anchored to regenerative human connection.</p>`
             },
             east: { 
-                title: "PrecariUS Times (Author Template)", color: "#ef4444", desc: "Click here to eXplore full details",
+                title: "PrecariUS Times (Artist/Author template)", infoTitle: "Artist/Author/ Creator template", color: "#ef4444", desc: "Player - Ambassador - Creator network of networX", actionLine: "Click here to eXplore more details",
                 fullText: `<div class="precarius-times-content" style="text-align: center; max-width: 900px; margin: 0 auto;">
                     <h1>PrecariUS Times</h1>
                     [Image 01]
@@ -993,37 +987,42 @@
                 </div>`
             },
             se: { 
-                title: "Expression Node", color: "#f97316", desc: "Bridge: Connection & Healing. Art, story, and TTimecapsules.",
-                fullText: `<h2>Expression Node</h2>
+                title: "Inter-reGenerational TTimecapsule", infoTitle: "Galactic-Glocal Xcards & CoOpoly ♾️Gameboards", color: "#f97316", desc: "TTravelers Peace It Together…building a better future—n0w!", actionLine: "Click here to eXplore more details",
+                fullText: `<h2>Inter-reGenerational TTimecapsule</h2>
                            <p>Bridging Connection and Healing, the Expression Node is a creative hub for artists, musicians, and storytellers. True healing often requires the capacity to express one's inner world safely and authentically.</p>
                            <p>This space empowers players to channel their emotions, visions, and experiences into the broader holonic network, turning their personal journey into art that inspires and uplifts the collective community.</p>`
             },
             south: { 
-                title: "WEllnessX", color: "#eab308", desc: "Gateway of Healing. Biofeedback, longevity, and regeneration.",
+                title: "Sacred Space Sphere Living Theater", infoTitle: "BurningManX & Festivals for a better world", color: "#eab308", desc: "Any sized Game Playce", actionLine: "Click here to eXplore more details",
                 fullText: `<h2>WEllnessX (South Portal)</h2>
                            <p>Welcome to the Gateway of Healing. To build a healthy world, we must first build healthy vessels. WEllnessX gamifies your holistic health journey.</p>
                            <p>This portal explores the frontiers of biofeedback, longevity practices, <b>Be Well pop-ups</b>, and the transmission of intergenerational regenerative wisdom. It integrates physical health with mental and spiritual alignment.</p>
                            <p>By engaging with WEllnessX, players learn to treat their bodies as sacred geometry, ensuring they have the vitality required to continue playing the Infinite Game.</p>`
             },
             sw: { 
-                title: "Resolution Node", color: "#22c55e", desc: "Bridge: Healing & Prosperity. Regen Campus & ecology.",
+                title: "1st All HEMP Game", infoTitle: "Quadruple R.O.I. Personal & Global Peace & Prosperity 4ALL", color: "#22c55e", desc: "Ecological-Financial-Social-Quantum", actionLine: "Click here to eXplore more details",
                 fullText: `<h2>Resolution Node</h2>
                            <p>Bridging Healing and Prosperity, the Resolution Node focuses strictly on ecological regeneration and planetary stewardship. True prosperity cannot exist on a dying planet.</p>
                            <p>This node is the seed point for the <b>Regen Campus Model</b>, weaving regenerative agricultural practices, local food systems, and immersive design into a living blueprint for community resilience.</p>`
             },
             west: { 
-                title: "BeISnessX", color: "#06b6d4", desc: "Gateway of Prosperity. AI-IA tools and CoOpoly franchises.",
+                title: "Book-chain-of-chains", infoTitle: "IndeX of X sacred geometrical organizational structures", color: "#06b6d4", desc: "Infinite deep holonic fractal browser", actionLine: "Click here to eXplore more details",
                 fullText: `<h2>BeISnessX (West Portal)</h2>
                            <p>Welcome to the Gateway of Prosperity. For generations, Monopoly taught us to be ruthless, bankrupt our friends, and hoard resources. BeISnessX introduces the era of <b>CoOpoly™</b>.</p>
                            <p>This portal transforms workplace dynamics, turning corporate team-building into productive play. It provides access to <b>AI-IA (Internal Algorithm)</b> business tools and franchise opportunities, allowing conscious entrepreneurs to literally get Paid 2 Play.</p>
                            <p>It acts as the economic engine of the ecosystem, proving that doing good in the world can also be massively profitable.</p>`
             },
             nw: { 
-                title: "Creation Node", color: "#3b82f6", desc: "Bridge: Prosperity & Learning. PACreator DAO.",
+                title: "Xorb ♾️Game App", infoTitle: "FreeMeOM Downloadn of core XTech", color: "#3b82f6", desc: "with infinite updates & custom card decks", actionLine: "Click here to eXplore more details",
                 fullText: `<h2>Creation Node</h2>
                            <p>Bridging Prosperity and Learning, the Creation Node is where players become architects of the game itself.</p>
                            <p>Here, you step into <b>PACreator (Player-Ambassador-Creator)</b> status. Empowered by the platform, users can develop new game modules, launch decentralized autonomous organizations (DAOs), and steward local franchise nodes to spread the Infinite Game into new territories.</p>`
-            }
+            },
+            en1: { title: "ENTucationX", infoTitle: "Entertaining Educational content delivery", color: "#8b5cf6", desc: "PreK-PostDoc Playified Content=Consciousness", actionLine: "Click here to eXplore more details", fullText: "<h2 style='text-align:center;'>Content Coming Soon</h2>" },
+            en5: { title: "CommUnityX", infoTitle: "Galactic-Global-Local-Individual fractal X", color: "#ef4444", desc: "Galactic-Glocal League of Group-mind, teams, tribes, squads,..", actionLine: "Click here to eXplore more details", fullText: "<h2 style='text-align:center;'>Content Coming Soon</h2>" },
+            en9: { title: "BeWellX", infoTitle: "Integrative Health & wHolistigraphic Longevity", color: "#eab308", desc: "Actualize your highest potential…helping others on their Journey", actionLine: "Click here to eXplore more details", fullText: "<h2 style='text-align:center;'>Content Coming Soon</h2>" },
+            en13: { title: "BeISnessX", infoTitle: "BEing Better Business & XTTech Plans", color: "#06b6d4", desc: "Chief PACreator Summary", actionLine: "Click here to eXplore more details", fullText: "<h2 style='text-align:center;'>Content Coming Soon</h2>" },
+            center: { title: "Essential Xperience", infoTitle: "coreX Algorithms & White-light papers", color: "#ffffff", desc: "ThanX for All the great light beings, ancestors and our dearly departed", actionLine: "", fullText: "" }
         };
 
         // Corrected origins for the octagonal petal layout to ensure zoom is centered.
@@ -1049,6 +1048,7 @@
         const layerInfoBox = document.getElementById('layer-info-box');
         const layerBoxTitle = document.getElementById('layerBoxTitle');
         const layerBoxDesc = document.getElementById('layerBoxDesc');
+        const layerBoxHint = document.getElementById('layerBoxHint');
 
         const fullScreenModal = document.getElementById('full-screen-modal');
         const modalBody = document.getElementById('modal-body');
@@ -1068,13 +1068,13 @@
                 <div class="outer-ring"></div>
                 <div class="inner-mask"></div>
                 <div class="edge-nodes-container" onmouseover="handleEdgeNodeMouseOver(event)" onmouseout="handleEdgeNodeMouseOut(event)">
-                    <div class="edge-node en-1" onmouseover="showHover('north')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'north')"></div><div class="edge-node en-2"></div>
+                    <div class="edge-node en-1" onmouseover="showHover('en1')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'en1')"></div><div class="edge-node en-2"></div>
                     <div class="edge-node en-3"></div><div class="edge-node en-4"></div>
-                    <div class="edge-node en-5" onmouseover="showHover('east')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'east')"></div><div class="edge-node en-6"></div>
+                    <div class="edge-node en-5" onmouseover="showHover('en5')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'en5')"></div><div class="edge-node en-6"></div>
                     <div class="edge-node en-7"></div><div class="edge-node en-8"></div>
-                    <div class="edge-node en-9" onmouseover="showHover('south')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'south')"></div><div class="edge-node en-10"></div>
+                    <div class="edge-node en-9" onmouseover="showHover('en9')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'en9')"></div><div class="edge-node en-10"></div>
                     <div class="edge-node en-11"></div><div class="edge-node en-12"></div>
-                    <div class="edge-node en-13" onmouseover="showHover('west')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'west')"></div><div class="edge-node en-14"></div>
+                    <div class="edge-node en-13" onmouseover="showHover('en13')" onmouseout="hideHover()" onclick="handlePetalClick(event, 'en13')"></div><div class="edge-node en-14"></div>
                     <div class="edge-node en-15"></div><div class="edge-node en-16"></div>
                 </div>
                 <div class="petals-container">
@@ -1087,7 +1087,7 @@
                     <div class="petal p-west" onmouseenter="handleMouseEnter('west')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'west')"></div>
                     <div class="petal p-nw" onmouseenter="handleMouseEnter('nw')" onmouseleave="handleMouseLeave()" onclick="handlePetalClick(event, 'nw')"></div>
                 </div>
-                <div class="center-core" onclick="zoomOut(event)"></div>
+                <div class="center-core" onmouseenter="handleMouseEnter('center')" onmouseleave="handleMouseLeave()" onclick="zoomOut(event)"></div>
             </div>`;
         }
 
@@ -1095,10 +1095,10 @@
 
         // Helper to get nodeId from edge-node class
         function getEdgeNodeId(target) {
-            if (target.classList.contains('en-1')) return 'north';
-            if (target.classList.contains('en-5')) return 'east';
-            if (target.classList.contains('en-9')) return 'south';
-            if (target.classList.contains('en-13')) return 'west';
+            if (target.classList.contains('en-1')) return 'en1';
+            if (target.classList.contains('en-5')) return 'en5';
+            if (target.classList.contains('en-9')) return 'en9';
+            if (target.classList.contains('en-13')) return 'en13';
             return null; // Ensure a value is always returned
         }
 
@@ -1230,15 +1230,16 @@
             historyStack.push(nodeId);
 
             // UI Updates
-            mainTitle.innerText = data.title;
+            mainTitle.innerText = data.infoTitle || data.title;
             mainTitle.style.textShadow = `0 0 20px ${data.color}`;
             mainTitle.style.color = data.color;
             navHint.classList.add('visible');
 
             // Clear existing timeout and reset the bottom box content
             clearTimeout(layerBoxTimeout);
-            layerBoxTitle.innerText = data.title;
+            layerBoxTitle.innerText = data.infoTitle || data.title;
             layerBoxDesc.innerText = data.desc;
+            layerBoxHint.innerText = data.actionLine !== undefined ? data.actionLine : "Click here to eXplore full details";
             layerInfoBox.style.setProperty('--glow-color', data.color);
 
             setTimeout(() => {
@@ -1292,7 +1293,7 @@
             } else {
                 currentNode = historyStack[historyStack.length - 1];
                 const parentData = nodeData[currentNode];
-                mainTitle.innerText = parentData.title;
+                mainTitle.innerText = parentData.infoTitle || parentData.title;
                 mainTitle.style.color = parentData.color;
                 mainTitle.style.textShadow = `0 0 20px ${parentData.color}`;
             }
