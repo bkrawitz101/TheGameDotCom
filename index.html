@@ -179,7 +179,7 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             border-radius: 50%;
-            background: conic-gradient(from -22.5deg, 
+            background: conic-gradient(from -112.5deg, 
                 #8b5cf6, #ec4899, #ef4444, #f97316, 
                 #eab308, #22c55e, #06b6d4, #3b82f6, #8b5cf6);
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
@@ -305,14 +305,14 @@
             box-shadow: 0 0 40px currentColor;
         }
 
-        .p-north { top: 24.72%; left: 33.38%; background-color: #8b5cf6; color: #8b5cf6; } 
-        .p-ne    { top: 24.72%; left: 45.62%; background-color: #ec4899; color: #ec4899; } 
-        .p-east  { top: 33.38%; left: 54.28%; background-color: #ef4444; color: #ef4444; } 
-        .p-se    { top: 45.62%; left: 54.28%; background-color: #f97316; color: #f97316; } 
-        .p-south { top: 54.28%; left: 45.62%; background-color: #eab308; color: #eab308; } 
-        .p-sw    { top: 54.28%; left: 33.38%; background-color: #22c55e; color: #22c55e; } 
-        .p-west  { top: 45.62%; left: 24.72%; background-color: #06b6d4; color: #06b6d4; } 
-        .p-nw    { top: 33.38%; left: 24.72%; background-color: #3b82f6; color: #3b82f6; } 
+        .p-north { top: 24.72%; left: 45.62%; background-color: #8b5cf6; color: #8b5cf6; } /* N */
+        .p-ne    { top: 33.38%; left: 54.28%; background-color: #ec4899; color: #ec4899; } /* NE */
+        .p-east  { top: 45.62%; left: 54.28%; background-color: #ef4444; color: #ef4444; } /* E */
+        .p-se    { top: 54.28%; left: 45.62%; background-color: #f97316; color: #f97316; } /* SE */
+        .p-south { top: 54.28%; left: 33.38%; background-color: #eab308; color: #eab308; } /* S */
+        .p-sw    { top: 45.62%; left: 24.72%; background-color: #22c55e; color: #22c55e; } /* SW */
+        .p-west  { top: 33.38%; left: 24.72%; background-color: #06b6d4; color: #06b6d4; } /* W */
+        .p-nw    { top: 24.72%; left: 33.38%; background-color: #3b82f6; color: #3b82f6; } /* NW */
 
         /* Center Galaxy Core */
         .center-core {
@@ -1026,9 +1026,17 @@
             }
         };
 
+        // Corrected origins for the octagonal petal layout to ensure zoom is centered.
         const origins = {
-            north: "50% 34%", ne: "61.32% 38.68%", east: "66% 50%", se: "61.32% 61.32%",
-            south: "50% 66%", sw: "38.68% 61.32%", west: "34% 50%", nw: "38.68% 38.68%", center: "50% 50%"
+            north: "56.12% 35.22%", 
+            ne:    "64.78% 43.88%", 
+            east:  "64.78% 56.12%", 
+            se:    "56.12% 64.78%",
+            south: "43.88% 64.78%", 
+            sw:    "35.22% 56.12%", 
+            west:  "35.22% 43.88%", 
+            nw:    "43.88% 35.22%", 
+            center: "50% 50%"
         };
 
         const viewport = document.getElementById('fractal-viewport');
@@ -1228,7 +1236,7 @@
             newLayer.className = 'holonic-container state-active';
 
             const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim();
-            newLayer.querySelector('.outer-ring').style.background = `conic-gradient(from -22.5deg, ${data.color}, ${bgColor}, ${data.color})`;
+            newLayer.querySelector('.outer-ring').style.background = `conic-gradient(from 0deg, ${data.color}, ${bgColor}, ${data.color})`;
 
             historyStack.push(nodeId);
 
