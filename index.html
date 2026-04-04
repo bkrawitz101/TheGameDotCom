@@ -124,6 +124,113 @@
             opacity: 0.8;
         }
 
+        /* --- HAND HISTORY PANEL & ICON --- */
+        #hand-history-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--panel-bg);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 3000;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        #hand-history-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+        
+        #hand-history-panel {
+            position: fixed;
+            top: 0; left: -320px;
+            width: 320px;
+            height: 100vh;
+            background: var(--panel-bg);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 3100;
+            transition: left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            padding: 25px 20px;
+            box-sizing: border-box;
+            color: var(--text-color);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        }
+        #hand-history-panel.open { left: 0; }
+        
+        .hand-history-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 15px; margin-bottom: 20px;
+        }
+        .hand-history-header h3 { margin: 0; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; }
+        .hand-history-header span { font-size: 28px; cursor: pointer; opacity: 0.7; transition: opacity 0.3s; line-height: 1; }
+        .hand-history-header span:hover { opacity: 1; }
+        
+        #hand-history-grid {
+            flex-grow: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 15px; align-content: start; padding-right: 5px;
+        }
+        #hand-history-grid::-webkit-scrollbar { width: 6px; }
+        #hand-history-grid::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        #hand-history-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
+        
+        .history-card {
+            width: 100%; aspect-ratio: 2.5 / 3.5; background-size: cover; background-position: center;
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4); transition: transform 0.3s;
+        }
+        .history-card:hover { transform: scale(1.05); border-color: #fff; z-index: 2; }
+        
+        @media (max-width: 768px) {
+            #hand-history-panel { width: 85vw; left: -85vw; }
+            #hand-history-btn { top: 10px; left: 10px; width: 45px; height: 45px; font-size: 20px; }
+        }
+
+        /* --- PLACEMENT BOARD --- */
+        #placement-board-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.9); z-index: 100000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: opacity 0.4s;
+            backdrop-filter: blur(20px);
+        }
+        #placement-board-modal.active { opacity: 1; visibility: visible; }
+        .placement-board-inner {
+            background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px; padding: 25px 40px; text-align: center;
+            max-width: 800px; width: 90%; color: var(--text-color);
+            position: relative; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+        #placement-fractal {
+            position: relative; width: 55vmin; height: 55vmin; 
+            max-width: 450px; max-height: 450px; margin: 15px auto;
+            cursor: crosshair;
+        }
+        .placed-card {
+            position: absolute; width: 10.5%; aspect-ratio: 1; background-size: cover;
+            background-position: center; border-radius: 50%;
+            transform: translate(-50%, -50%); z-index: 100; pointer-events: auto; cursor: grab;
+        }
+        .placed-card:active { cursor: grabbing; }
+        #placement-hand { display: flex; gap: 10px; justify-content: center; overflow-x: auto; padding: 10px; }
+        .placement-hand-card {
+            width: 80px; height: 112px; background-size: cover; background-position: center;
+            border-radius: 5px; cursor: pointer; border: 2px solid transparent;
+            transition: transform 0.2s; flex-shrink: 0;
+        }
+        .placement-hand-card.selected { border-color: #4dc4ff; transform: scale(1.1); box-shadow: 0 0 15px #4dc4ff; }
+
         /* The Main Viewport for Fractal Zooming */
         #fractal-viewport {
             position: relative;
@@ -565,6 +672,21 @@
             <div class="click-hint" id="layerBoxHint">Click here to eXplore full details</div>
         </div>
 
+        <!-- Hand Tracker Icon & Panel -->
+        <div id="hand-history-btn" onclick="toggleHandHistory()">🎴</div>
+        <div id="hand-history-panel">
+            <div class="hand-history-header">
+                <h3>Your Hand</h3>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <span onclick="openPlacementBoard()" title="Place Cards on Board" style="font-size: 24px;">🧩</span>
+                    <span onclick="toggleHandHistory()">&times;</span>
+                </div>
+            </div>
+            <div id="hand-history-grid">
+                <!-- Dealt images injected here -->
+            </div>
+        </div>
+
     </div>
 
     <!-- Full Screen Modal -->
@@ -576,6 +698,49 @@
             </div>
         </div>
     </div>
+
+        <!-- Placement Board Modal -->
+        <div id="placement-board-modal">
+            <div class="placement-board-inner">
+                <span class="modal-close-btn" onclick="closePlacementBoard()">&times;</span>
+                <h2 style="margin-top:0; font-weight:300; letter-spacing:3px;">Holonic Game Board</h2>
+                <div id="placement-fractal" onclick="placeCardOnBoard(event)">
+                    <div class="outer-ring" style="background: conic-gradient(from -22.5deg, #8b5cf6, #ec4899, #ef4444, #f97316, #eab308, #22c55e, #06b6d4, #3b82f6, #8b5cf6);"></div>
+                    <div class="inner-mask"></div>
+                    <div class="edge-nodes-container">
+                        <div class="edge-node en-1"></div>
+                        <div class="edge-node en-2"></div>
+                        <div class="edge-node en-3"></div>
+                        <div class="edge-node en-4"></div>
+                        <div class="edge-node en-5"></div>
+                        <div class="edge-node en-6"></div>
+                        <div class="edge-node en-7"></div>
+                        <div class="edge-node en-8"></div>
+                        <div class="edge-node en-9"></div>
+                        <div class="edge-node en-10"></div>
+                        <div class="edge-node en-11"></div>
+                        <div class="edge-node en-12"></div>
+                        <div class="edge-node en-13"></div>
+                        <div class="edge-node en-14"></div>
+                        <div class="edge-node en-15"></div>
+                        <div class="edge-node en-16"></div>
+                    </div>
+                    <div class="petals-container">
+                        <div class="petal p-north"></div>
+                        <div class="petal p-ne"></div>
+                        <div class="petal p-east"></div>
+                        <div class="petal p-se"></div>
+                        <div class="petal p-south"></div>
+                        <div class="petal p-sw"></div>
+                        <div class="petal p-west"></div>
+                        <div class="petal p-nw"></div>
+                    </div>
+                    <div class="center-core"></div>
+                </div>
+                <h3 style="font-weight:300;">Select a Card to Place</h3>
+                <div id="placement-hand"></div>
+            </div>
+        </div>
 
     <script>
         // 1. Asymmetrical Randomness for BG Color & Stars
@@ -1054,8 +1219,12 @@
         const modalBody = document.getElementById('modal-body');
 
         let historyStack = [];
+        let imageHistoryStack = [];
         let currentNode = null;
         let layerBoxTimeout;
+        let selectedCardForPlacement = null;
+        let isDragging = false;
+        let dragTarget = null;
 
         // --- 3. MOBILE & TOUCH LOGIC ---
         // We detect touch devices reliably to enable the 2-tap system
@@ -1191,6 +1360,134 @@
             document.querySelectorAll('.petal, .edge-node').forEach(el => el.classList.remove('mobile-focused')); // Clear both
         }
 
+        // --- TRACKING THE HAND ---
+        function updateHandTracker() {
+            const grid = document.getElementById('hand-history-grid');
+            grid.innerHTML = '';
+            imageHistoryStack.forEach((imgNum) => {
+                const card = document.createElement('div');
+                card.className = 'history-card';
+                card.style.backgroundImage = `url('Images/precarius-times/image-${imgNum}.webp')`;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleHandHistory() {
+            const panel = document.getElementById('hand-history-panel');
+            panel.classList.toggle('open');
+        }
+
+        // --- PLACEMENT BOARD LOGIC ---
+        function openPlacementBoard() {
+            toggleHandHistory(); // close the side panel
+            const modal = document.getElementById('placement-board-modal');
+            const handContainer = document.getElementById('placement-hand');
+            handContainer.innerHTML = '';
+            
+            // Figure out which ones are already placed
+            const placedElements = document.querySelectorAll('.placed-card');
+            const placedCounts = {};
+            placedElements.forEach(el => {
+                const imgNum = el.dataset.imgNum;
+                placedCounts[imgNum] = (placedCounts[imgNum] || 0) + 1;
+            });
+
+            // Populate the hand area of the placement board
+            imageHistoryStack.forEach((imgNum) => {
+                if (placedCounts[imgNum] > 0) { placedCounts[imgNum]--; return; } // Skip already placed cards
+
+                const card = document.createElement('div');
+                card.className = 'placement-hand-card';
+                card.style.backgroundImage = `url('Images/precarius-times/image-${imgNum}.webp')`;
+                card.onclick = () => {
+                    document.querySelectorAll('.placement-hand-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    selectedCardForPlacement = imgNum;
+                };
+                handContainer.appendChild(card);
+            });
+            modal.classList.add('active');
+        }
+
+        function closePlacementBoard() {
+            document.getElementById('placement-board-modal').classList.remove('active');
+            selectedCardForPlacement = null;
+        }
+
+        function placeCardOnBoard(event) {
+            if (event.target.classList.contains('placed-card')) return;
+
+            if (!selectedCardForPlacement) {
+                alert("Select a card from your hand below first!");
+                return;
+            }
+            
+            const board = document.getElementById('placement-fractal');
+            const rect = board.getBoundingClientRect();
+            
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            const xPercent = (x / rect.width) * 100;
+            const yPercent = (y / rect.height) * 100;
+            
+            const card = document.createElement('div');
+            card.className = 'placed-card';
+            card.style.left = `${xPercent}%`;
+            card.style.top = `${yPercent}%`;
+            card.style.backgroundImage = `url('Images/precarius-times/image-${selectedCardForPlacement}.webp')`;
+            card.dataset.imgNum = selectedCardForPlacement;
+            
+            // Drag & Drop events
+            card.addEventListener('mousedown', startDrag);
+            card.addEventListener('touchstart', startDrag, {passive: false});
+            card.addEventListener('click', (e) => e.stopPropagation()); // Prevent placing another card underneath
+            
+            board.appendChild(card);
+            
+            // Remove from hand UI
+            const selectedEl = document.querySelector('.placement-hand-card.selected');
+            if (selectedEl) selectedEl.remove();
+            selectedCardForPlacement = null;
+        }
+
+        // --- DRAG AND DROP LOGIC FOR PLACED CARDS ---
+        function startDrag(e) {
+            isDragging = true;
+            dragTarget = e.target;
+            e.stopPropagation();
+        }
+
+        function onDrag(e) {
+            if (!isDragging || !dragTarget) return;
+            if (e.type === 'touchmove') e.preventDefault(); // Prevent scrolling on touch
+
+            const board = document.getElementById('placement-fractal');
+            const rect = board.getBoundingClientRect();
+            
+            let clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            let clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+            
+            const xPercent = (x / rect.width) * 100;
+            const yPercent = (y / rect.height) * 100;
+            
+            dragTarget.style.left = `${xPercent}%`;
+            dragTarget.style.top = `${yPercent}%`;
+        }
+
+        function stopDrag() {
+            isDragging = false;
+            dragTarget = null;
+        }
+
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchmove', onDrag, {passive: false});
+        document.addEventListener('touchend', stopDrag);
+
         // --- VISUAL & ANIMATION LOGIC ---
         function showHover(nodeId) {
             const data = nodeData[nodeId];
@@ -1227,7 +1524,18 @@
             const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim();
             newLayer.querySelector('.outer-ring').style.background = `conic-gradient(from -22.5deg, ${data.color}, ${bgColor}, ${data.color})`;
 
+            // Add random image to the new center core
+            const randomNum = Math.floor(Math.random() * (47 - 8 + 1)) + 8;
+            const paddedNum = randomNum.toString().padStart(2, '0');
+            const centerCore = newLayer.querySelector('.center-core');
+            centerCore.style.backgroundImage = `url('Images/precarius-times/image-${paddedNum}.webp')`;
+            centerCore.style.backgroundSize = 'cover';
+            centerCore.style.backgroundPosition = 'center';
+            centerCore.style.backgroundRepeat = 'no-repeat';
+
             historyStack.push(nodeId);
+            imageHistoryStack.push(paddedNum);
+            updateHandTracker();
 
             // UI Updates
             mainTitle.innerText = data.infoTitle || data.title;
@@ -1283,6 +1591,8 @@
             }, 4000);
 
             historyStack.pop();
+            imageHistoryStack.pop();
+            updateHandTracker();
 
             if(historyStack.length === 0) {
                 currentNode = null;
