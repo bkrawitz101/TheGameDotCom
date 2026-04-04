@@ -1322,7 +1322,7 @@
                         // Tap 2 on mobile for 'ne': Zoom In (then video will play)
                         mobileFocusedNode = null; // Clear mobile focus if it was set
                         clearMobileFocus();
-                        zoomIn(nodeId); // Call zoomIn, which will then trigger playPromoVideo
+                        zoomIn(nodeId, event); // Call zoomIn, which will then trigger playPromoVideo
                     }
                 } else if (mobileFocusedNode !== nodeId) { // First tap on any other node
                     event.preventDefault();
@@ -1333,13 +1333,13 @@
                 } else { // Second tap on any other node: Zoom In
                     mobileFocusedNode = null;
                     clearMobileFocus();
-                    zoomIn(nodeId);
+                    zoomIn(nodeId, event);
                 }
             } else {
                 // Desktop Click
                 console.log(`handlePetalClick (desktop) for nodeId: ${nodeId}`);
                 // Always zoom in for 'ne', and the video will be triggered by zoomIn
-                zoomIn(nodeId);
+                zoomIn(nodeId, event);
             }
         }
 
@@ -1500,7 +1500,7 @@
             hoverPreview.classList.remove('active');
         }
 
-        function zoomIn(nodeId) {
+        function zoomIn(nodeId, event) {
             console.log(`zoomIn called for nodeId: ${nodeId}`);
             hideHover(); 
 
@@ -1524,18 +1524,55 @@
             const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim();
             newLayer.querySelector('.outer-ring').style.background = `conic-gradient(from -22.5deg, ${data.color}, ${bgColor}, ${data.color})`;
 
-            // Add random image to the new center core
+            // Generate random image for the card
             const randomNum = Math.floor(Math.random() * (47 - 8 + 1)) + 8;
             const paddedNum = randomNum.toString().padStart(2, '0');
-            const centerCore = newLayer.querySelector('.center-core');
-            centerCore.style.backgroundImage = `url('Images/precarius-times/image-${paddedNum}.webp')`;
-            centerCore.style.backgroundSize = 'cover';
-            centerCore.style.backgroundPosition = 'center';
-            centerCore.style.backgroundRepeat = 'no-repeat';
+            
+            // Get click coordinates to spawn card exactly where clicked
+            let clickX = window.innerWidth / 2;
+            let clickY = window.innerHeight / 2;
+            if (event && event.clientX !== undefined) {
+                clickX = event.clientX;
+                clickY = event.clientY;
+            } else if (event && event.changedTouches && event.changedTouches.length > 0) {
+                clickX = event.changedTouches[0].clientX;
+                clickY = event.changedTouches[0].clientY;
+            }
 
-            // Make the card image disappear from the center core after 4 seconds
+            // Create floating card at click location
+            const floatingCard = document.createElement('div');
+            floatingCard.style.position = 'fixed';
+            floatingCard.style.left = `${clickX}px`;
+            floatingCard.style.top = `${clickY}px`;
+            floatingCard.style.width = '16vmin';
+            floatingCard.style.height = '16vmin';
+            floatingCard.style.borderRadius = '50%'; // Circular card
+            floatingCard.style.backgroundImage = `url('Images/precarius-times/image-${paddedNum}.webp')`;
+            floatingCard.style.backgroundSize = 'cover';
+            floatingCard.style.backgroundPosition = 'center';
+            floatingCard.style.zIndex = '99999';
+            floatingCard.style.boxShadow = `0 10px 30px rgba(0,0,0,0.6), 0 0 30px ${data.color}`;
+            floatingCard.style.transform = 'translate(-50%, -50%) scale(0.1)';
+            floatingCard.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease';
+            floatingCard.style.pointerEvents = 'none';
+
+            document.body.appendChild(floatingCard);
+
+            // Animate card popping up
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    floatingCard.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                });
+            });
+
+            // Make the card disappear after 4 seconds into the hand UI
             setTimeout(() => {
-                centerCore.style.backgroundImage = '';
+                floatingCard.style.transition = 'left 0.6s ease-in, top 0.6s ease-in, transform 0.6s ease-in, opacity 0.6s ease';
+                floatingCard.style.opacity = '0';
+                floatingCard.style.left = '45px'; // Top-left hand icon location
+                floatingCard.style.top = '45px';
+                floatingCard.style.transform = 'translate(-50%, -50%) scale(0.2)';
+                setTimeout(() => floatingCard.remove(), 600); // Clean up DOM
             }, 4000);
 
             historyStack.push(nodeId);
