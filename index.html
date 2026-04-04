@@ -1533,6 +1533,11 @@
             centerCore.style.backgroundPosition = 'center';
             centerCore.style.backgroundRepeat = 'no-repeat';
 
+            // Make the card image disappear from the center core after 4 seconds
+            setTimeout(() => {
+                centerCore.style.backgroundImage = '';
+            }, 4000);
+
             historyStack.push(nodeId);
             imageHistoryStack.push(paddedNum);
             updateHandTracker();
